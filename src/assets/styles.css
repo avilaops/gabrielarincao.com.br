@@ -32,7 +32,7 @@
     --text-inverse: #ffffff;
     
     /* Tipografia - San Francisco inspired */
-    --font-display: 'Inter', sans-serif;
+    --font-display: 'Playfair Display', Georgia, serif;
     --font-body: 'Inter', sans-serif;
     --font-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
     
@@ -117,7 +117,7 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
     line-height: 1.2;
     color: var(--text-primary);
-    letter-spacing: -0.02em;
+    letter-spacing: 0;
 }
 
 h1 { 
@@ -892,4 +892,52 @@ a:focus {
 
 .indicator:hover {
     background: var(--primary-dark);
+}
+
+/* ===== REFINAMENTOS DE ELEGÂNCIA ===== */
+
+/* Detalhe dourado decorativo sob títulos de seção centralizados */
+section h2.text-center {
+    position: relative;
+    padding-bottom: 20px;
+    margin-bottom: 48px;
+}
+
+section h2.text-center::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: 64px;
+    height: 3px;
+    border-radius: var(--radius-full);
+    background: var(--primary-gradient);
+}
+
+/* Cards mais sofisticados com acento dourado no hover */
+.card {
+    border-radius: var(--radius-lg);
+    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+    border-color: rgba(212, 165, 116, 0.4);
+}
+
+/* Títulos de cards com a serifada na cor da marca */
+.card h3 {
+    letter-spacing: 0;
+}
+
+/* Botões com tracking levemente aberto (mais premium) */
+.btn {
+    letter-spacing: 0.02em;
+}
+
+/* Parágrafos um pouco mais arejados */
+p {
+    line-height: 1.7;
 }

@@ -10,8 +10,8 @@
 ## Links Rápidos
 
 ### WhatsApp
-- Link direto: https://wa.me/5517996820993
-- Link com mensagem: https://wa.me/5517996820993?text=Olá! Gostaria de agendar um horário
+- Link direto: https://wa.me/5517996820993 
+
 
 ### Email
 - Link direto: mailto:gabrielacasari@hotmail.com

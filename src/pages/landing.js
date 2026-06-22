@@ -8,25 +8,18 @@ export class LandingPage {
             
             <!-- Hero Section -->
             <section style="
-                background: 
-                    linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.05) 100%),
-                    linear-gradient(135deg, rgba(212, 165, 116, 0.2) 0%, rgba(184, 145, 95, 0.2) 50%, rgba(150, 120, 80, 0.3) 100%),
-                    url('./background.avif');
-                background-image: image-set(
-                    url('./background.avif') type('image/avif')
-                );
-                background-size: cover;
-                background-position: center;
-                background-blend-mode: overlay;
+                background:
+                    radial-gradient(circle at 50% 20%, rgba(212,165,116,0.28) 0%, rgba(212,165,116,0) 55%),
+                    linear-gradient(135deg, #1a1410 0%, #2a2018 45%, #3a2c1e 100%);
                 color: white;
-                padding: 120px 24px;
+                padding: 140px 24px;
                 text-align: center;
             ">
                 <div class="container">
-                    <h1 style="font-size: 3rem; margin-bottom: 24px; font-weight: 700; max-width: 820px; margin-left: auto; margin-right: auto; line-height: 1.1;">
+                    <h1 style="color: #ffffff; font-size: 3rem; margin-bottom: 24px; font-weight: 700; max-width: 820px; margin-left: auto; margin-right: auto; line-height: 1.1; text-shadow: 0 2px 20px rgba(0,0,0,0.55);">
                         Realce Sua Beleza Natural
                     </h1>
-                    <p style="font-size: 1.5rem; margin-bottom: 40px; opacity: 0.95; max-width: 600px; margin-left: auto; margin-right: auto;">
+                    <p style="color: #ffffff; font-size: 1.5rem; margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; text-shadow: 0 1px 12px rgba(0,0,0,0.6);">
                         Design de sobrancelhas com técnica, precisão e elegância
                     </p>
                     <div class="flex flex-center gap-md" style="flex-wrap: wrap;">
@@ -45,14 +38,8 @@ export class LandingPage {
 
             <!-- Depoimentos -->
             <section style="
-                padding: 80px 24px; 
-                background: 
-                    linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.92) 100%),
-                    url('./background.avif');
-                background-size: cover;
-                background-position: center;
-                background-blend-mode: overlay;
-                background-attachment: fixed;
+                padding: 80px 24px;
+                background: var(--background-alt);
             ">
                 <div class="container">
                     <h2 class="text-center mb-lg">O Que Nossos Clientes Dizem</h2>
@@ -125,14 +112,8 @@ export class LandingPage {
 
             <!-- Serviços -->
             <section id="servicos" style="
-                padding: 80px 24px; 
-                background: 
-                    linear-gradient(180deg, rgba(248,249,250,0.85) 0%, rgba(248,249,250,0.92) 100%),
-                    url('./background.avif');
-                background-size: cover;
-                background-position: center;
-                background-blend-mode: overlay;
-                background-attachment: fixed;
+                padding: 80px 24px;
+                background: var(--background-alt);
             ">
                 <div class="container">
                     <h2 class="text-center mb-lg">Nossos Serviços</h2>
@@ -221,6 +202,22 @@ export class LandingPage {
                             <p class="text-secondary">Você sai linda e confiante para arrasar!</p>
                         </div>
                     </div>
+                </div>
+            </section>
+
+            <!-- Instagram -->
+            <section id="instagram" style="padding: 80px 24px; background: white;">
+                <div class="container" style="text-align: center;">
+                    <h2 class="mb-sm">Acompanhe no Instagram</h2>
+                    <a href="https://instagram.com/gabrielarincao" target="_blank" rel="noopener noreferrer"
+                       style="display: inline-block; color: var(--primary); font-size: 1.2rem; font-weight: 600; text-decoration: none; margin-bottom: 32px;">
+                        @gabrielarincao
+                    </a>
+                    <a href="https://instagram.com/gabrielarincao" target="_blank" rel="noopener noreferrer"
+                       class="btn btn-lg"
+                       style="background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; font-weight: 600;">
+                        📷 Seguir no Instagram
+                    </a>
                 </div>
             </section>
 
@@ -356,6 +353,22 @@ export class LandingPage {
                     Agendar
                 </a>
             </div>
+        `;
+    }
+
+    renderInstaTile(img) {
+        return `
+            <a href="https://instagram.com/gabrielarincao" target="_blank" rel="noopener noreferrer"
+               style="position: relative; display: block; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 8px; background: var(--background);"
+               onmouseover="this.querySelector('img').style.transform='scale(1.06)'; this.querySelector('.insta-overlay').style.opacity='1';"
+               onmouseout="this.querySelector('img').style.transform='scale(1)'; this.querySelector('.insta-overlay').style.opacity='0';">
+                <img src="./${img}" alt="Trabalho de Gabriela Rincão no Instagram" loading="lazy"
+                     style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;">
+                <span class="insta-overlay"
+                      style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.35); color: white; font-size: 2rem; opacity: 0; transition: opacity 0.3s ease;">
+                    📷
+                </span>
+            </a>
         `;
     }
 
