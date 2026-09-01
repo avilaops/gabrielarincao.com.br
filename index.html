@@ -12,15 +12,54 @@
     })(window,document,'script','dataLayer','GTM-PN6HQSHL');</script>
     <!-- End Google Tag Manager -->
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWKQ5114PJ"></script>
+    <!-- GA4 sai pelo container GTM-PN6HQSHL (tag GA4 — Config), não por
+         gtag.js direto: o G-QWKQ5114PJ que ficava aqui apontava para uma
+         propriedade fora da conta GA4 administrada pela Avila Ops, então os
+         hits saíam do navegador e ninguém conseguia ler o relatório. Hoje o
+         container publica o G-KVPEVRMX47, criado pelo TagFlow. -->
+
+    <!-- generate_lead: todo clique que leva a pessoa para um canal de
+         atendimento. O agendamento acontece no WhatsApp, fora de qualquer
+         medição — o clique de saída é o último sinal observável, e é ele que
+         faz o papel de conversão no GA4.
+
+         Fica aqui, delegado no document, e não nos links de src/pages/landing.js:
+         a landing é montada por JavaScript depois, e um listener por elemento
+         perderia tudo que for renderizado ou trocado a partir de agora. -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-QWKQ5114PJ');
+      (function () {
+        function canal(href) {
+          if (/wa\.me|whatsapp\.com/i.test(href)) return 'whatsapp';
+          if (/^tel:/i.test(href)) return 'telefone';
+          if (/^mailto:/i.test(href)) return 'email';
+          if (/instagram\.com/i.test(href)) return 'instagram';
+          if (/google\.[^/]+\/maps|maps\.app\.goo\.gl/i.test(href)) return 'maps';
+          return null;
+        }
+
+        document.addEventListener('click', function (evento) {
+          var alvo = evento.target;
+          if (!alvo || !alvo.closest) return;
+
+          var link = alvo.closest('a');
+          if (!link || !link.href) return;
+
+          var origem = canal(link.href);
+          if (!origem) return;
+
+          var texto = (link.textContent || '').trim().replace(/\s+/g, ' ');
+
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({
+            event: 'generate_lead',
+            lead_source: origem,
+            lead_subject: texto ? texto.slice(0, 80) : window.location.pathname,
+            link_url: link.href,
+            page_path: window.location.pathname
+          });
+        });
+      })();
     </script>
-    <!-- End Google tag (gtag.js) -->
     <meta name="description" content="Gabriela Rincão - Estúdio de Design de Sobrancelhas, Brow Lamination e Nanofios">
     <meta name="theme-color" content="#D4A574">
     <title>Gabriela Rincão - Brow Lamination e Nanofios</title>
