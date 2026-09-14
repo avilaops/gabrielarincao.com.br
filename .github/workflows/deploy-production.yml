@@ -12,7 +12,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    uses: avilaops/infra-observabilidade/.github/workflows/container.yml@cb950d970a7bf0638ecb89629be5d0456bfbb50c
+    uses: avilaops/infra/.github/workflows/container.yml@cb950d970a7bf0638ecb89629be5d0456bfbb50c
     with:
       context: .
       dockerfile: Dockerfile
@@ -23,7 +23,7 @@ jobs:
       packages: read
     needs: image
     if: github.event_name != 'pull_request' && vars.DEPLOY_ENABLED == 'true'
-    uses: avilaops/infra-observabilidade/.github/workflows/deploy-ssh.yml@cb950d970a7bf0638ecb89629be5d0456bfbb50c
+    uses: avilaops/infra/.github/workflows/deploy-ssh.yml@cb950d970a7bf0638ecb89629be5d0456bfbb50c
     with:
       application: gabrielarincao.com.br
       image: ${{ needs.image.outputs.image }}
