@@ -1,0 +1,34 @@
+name: Build e deploy
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  image:
+    permissions:
+      contents: read
+      packages: write
+    uses: avilaops/infra-observabilidade/.github/workflows/container.yml@cb950d970a7bf0638ecb89629be5d0456bfbb50c
+    with:
+      context: .
+      dockerfile: Dockerfile
+      publish: ${{ github.event_name != 'pull_request' }}
+  deploy:
+    permissions:
+      contents: read
+      packages: read
+    needs: image
+    if: github.event_name != 'pull_request' && vars.DEPLOY_ENABLED == 'true'
+    uses: avilaops/infra-observabilidade/.github/workflows/deploy-ssh.yml@cb950d970a7bf0638ecb89629be5d0456bfbb50c
+    with:
+      application: gabrielarincao.com.br
+      image: ${{ needs.image.outputs.image }}
+    secrets:
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+      DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+      DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
