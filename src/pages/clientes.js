@@ -461,34 +461,36 @@ export class ClientesPage {
 
                 try {
                     const resultado = await ImportacaoService.importarArquivo(file);
+                    // O serviço devolve contagens; a lista de erros vem em detalhes
+                    const erros = resultado.detalhes?.erros || [];
                     
                     const resultDiv = document.getElementById('import-result');
                     if (resultDiv) {
                         resultDiv.style.display = 'block';
-                        resultDiv.style.backgroundColor = resultado.erros.length > 0 ? '#fff3cd' : '#d4edda';
-                        resultDiv.style.color = resultado.erros.length > 0 ? '#856404' : '#155724';
+                        resultDiv.style.backgroundColor = erros.length > 0 ? '#fff3cd' : '#d4edda';
+                        resultDiv.style.color = erros.length > 0 ? '#856404' : '#155724';
                         resultDiv.innerHTML = `
                             <h4 style="margin: 0 0 8px 0;">Importação Concluída</h4>
-                            <p style="margin: 4px 0;">✅ ${Utils.sanitizeHTML(resultado.sucesso)} contato(s) importado(s)</p>
-                            ${resultado.erros.length > 0 ? `<p style="margin: 4px 0;">❌ ${resultado.erros.length} erro(s)</p>` : ''}
-                            ${resultado.erros.length > 0 ? `
+                            <p style="margin: 4px 0;">✅ ${Utils.sanitizeHTML(resultado.importados)} contato(s) importado(s)</p>
+                            ${erros.length > 0 ? `<p style="margin: 4px 0;">❌ ${erros.length} erro(s)</p>` : ''}
+                            ${erros.length > 0 ? `
                                 <details style="margin-top: 8px;">
                                     <summary style="cursor: pointer;">Ver erros</summary>
                                     <ul style="margin: 8px 0; padding-left: 20px;">
-                                        ${resultado.erros.map(e => `<li>${Utils.sanitizeHTML(e?.erro ? `Linha ${e.linha}: ${e.erro}` : e)}</li>`).join('')}
+                                        ${erros.map(e => `<li>${Utils.sanitizeHTML(e?.erro ? `Linha ${e.linha}: ${e.erro}` : e)}</li>`).join('')}
                                     </ul>
                                 </details>
                             ` : ''}
                         `;
                     }
 
-                    if (resultado.sucesso > 0) {
+                    if (resultado.importados > 0) {
                         this.loadClientes();
                     }
 
                     btnConfirmar.textContent = 'Concluído';
                     setTimeout(() => {
-                        if (resultado.erros.length === 0) {
+                        if (erros.length === 0) {
                             document.getElementById(modalId)?.remove();
                         }
                     }, 2000);

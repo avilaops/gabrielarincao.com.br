@@ -1,5 +1,6 @@
 // Componente de Header
 import { authService } from '../services/auth.js';
+import { Utils } from '../utils/utils.js';
 
 export class Header {
     static render(isLanding = false) {
@@ -46,7 +47,8 @@ export class Header {
         
         const currentHash = window.location.hash.slice(1) || '/';
         const session = authService.getSession();
-        const userName = session ? session.nome : 'Admin';
+        const userName = Utils.sanitizeHTML(session ? session.nome : 'Admin');
+        const userEmail = Utils.sanitizeHTML(session ? session.email : '');
         
         return `
             <header class="header">
@@ -79,7 +81,7 @@ export class Header {
             <nav class="mobile-nav" id="mobile-nav">
                 <div style="padding: 16px; border-bottom: 1px solid var(--border); background: var(--background);">
                     <div style="font-weight: 600;">👤 ${userName}</div>
-                    <div style="font-size: 0.875rem; color: var(--text-secondary);">${session ? session.email : ''}</div>
+                    <div style="font-size: 0.875rem; color: var(--text-secondary);">${userEmail}</div>
                 </div>
                 <a href="#/dashboard" class="mobile-nav-link ${currentHash === '/dashboard' ? 'active' : ''}" data-link>
                     <span>📊</span> Dashboard

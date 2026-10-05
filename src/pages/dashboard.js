@@ -366,11 +366,6 @@ export class DashboardPage {
     }
 
     formatPhone(phone) {
-        if (!phone) return '-';
-        const cleaned = phone.replace(/\D/g, '');
-        if (cleaned.length === 11) {
-            return `(${cleaned.substr(0,2)}) ${cleaned.substr(2,5)}-${cleaned.substr(7)}`;
-        }
-        return phone;
+        return Utils.formatPhone(phone);
     }
 }

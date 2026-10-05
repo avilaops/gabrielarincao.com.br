@@ -29,11 +29,13 @@ export class Utils {
      */
     static formatPhone(phone) {
         if (!phone) return '-';
-        const cleaned = phone.replace(/\D/g, '');
+        // Backup editado à mão pode trazer o telefone como número
+        const text = String(phone);
+        const cleaned = text.replace(/\D/g, '');
         if (cleaned.length === 11) {
             return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7)}`;
         }
-        return phone;
+        return text;
     }
 
     /**
