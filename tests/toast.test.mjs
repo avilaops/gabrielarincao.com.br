@@ -55,6 +55,19 @@ test('show cria o contêiner único com role e aria-live', () => {
     assert.equal(container.filhos.length, 2);
 });
 
+test('init cria o contêiner aria-live antes do primeiro toast', () => {
+    Toast.init();
+    assert.equal(document.body.filhos.length, 1);
+    const container = document.body.filhos[0];
+    assert.equal(container.id, 'toast-container');
+    assert.equal(container.atributos['aria-live'], 'polite');
+    assert.equal(container.filhos.length, 0);
+
+    Toast.show('um');
+    assert.equal(document.body.filhos.length, 1);
+    assert.equal(container.filhos.length, 1);
+});
+
 test('a mensagem entra por textContent, nunca por innerHTML', () => {
     const toast = Toast.show('<img src=x onerror=alert(1)>');
     assert.equal(toast.textContent, '<img src=x onerror=alert(1)>');
@@ -63,6 +76,7 @@ test('a mensagem entra por textContent, nunca por innerHTML', () => {
 
 test('tipo padrão é info e os atalhos usam as classes existentes', () => {
     assert.equal(Toast.show('a').className, 'toast toast-info');
+    assert.equal(Toast.info('a').className, 'toast toast-info');
     assert.equal(Toast.success('a').className, 'toast toast-success');
     assert.equal(Toast.error('a').className, 'toast toast-error');
     assert.equal(Toast.warning('a').className, 'toast toast-warning');

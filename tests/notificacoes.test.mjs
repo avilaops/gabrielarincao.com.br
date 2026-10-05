@@ -1,4 +1,4 @@
-import { test, beforeEach } from 'node:test';
+import { test, beforeEach, mock } from 'node:test';
 import assert from 'node:assert/strict';
 
 // O erro de data só aparece a oeste de Greenwich: fixa o fuso do Brasil, mesmo em `npm test`
@@ -30,6 +30,7 @@ const { Utils } = await import('../src/utils/utils.js');
 const { ClienteService } = await import('../src/services/clientes.js');
 const { NotificacoesService } = await import('../src/services/notificacoes.js');
 const { LembretesService } = await import('../src/services/lembretes.js');
+const { AgendaService } = await import('../src/services/agenda.js');
 
 const KEYS = StorageService.KEYS;
 
@@ -206,6 +207,72 @@ test('LembretesService devolve agendamento de amanhã com status agendado', () =
     const lista = LembretesService.getAgendamentosParaLembrete();
     assert.deepEqual(ids(lista).sort(), ['agendado', 'confirmado']);
     assert.equal(lista[0].cliente.nome, 'Ana');
+});
+
+test('LembretesService não lista quem já recebeu o lembrete, igual ao card Avisos', () => {
+    clientes([{ nome: 'Ana' }]);
+    const amanha = new Date();
+    amanha.setDate(amanha.getDate() + 1);
+    amanha.setHours(12, 0, 0, 0);
+    agendamentos([
+        { id: 'enviado', dataHora: amanha.toISOString(), lembreteEnviado: true },
+        { id: 'pendente', dataHora: amanha.toISOString() },
+        { id: 'falso', dataHora: amanha.toISOString(), lembreteEnviado: false },
+        { id: 'confirmado-enviado', dataHora: amanha.toISOString(), status: 'confirmado', lembreteEnviado: true }
+    ]);
+    const modal = ids(LembretesService.getAgendamentosParaLembrete()).sort();
+    assert.deepEqual(modal, ['falso', 'pendente']);
+    assert.deepEqual(modal, ids(NotificacoesService.lembretesPendentes(new Date())).sort());
+});
+
+test('enviar o lembrete tira o agendamento da lista do modal', () => {
+    clientes([{ nome: 'Ana' }]);
+    const amanha = new Date();
+    amanha.setDate(amanha.getDate() + 1);
+    amanha.setHours(12, 0, 0, 0);
+    agendamentos([
+        { id: 'um', dataHora: amanha.toISOString() },
+        { id: 'dois', dataHora: amanha.toISOString() }
+    ]);
+    const [primeiro] = LembretesService.getAgendamentosParaLembrete().filter(ag => ag.id === 'um');
+    LembretesService.enviarLembrete(primeiro, primeiro.cliente);
+    assert.deepEqual(ids(LembretesService.getAgendamentosParaLembrete()), ['dois']);
+});
+
+test('AgendaService.getPorData compara pelo dia local, mesmo depois das 21h', () => {
+    clientes([{ nome: 'Ana' }]);
+    agendamentos([
+        { id: 'manha', dataHora: '2026-10-05T10:00' },
+        { id: 'noite', dataHora: '2026-10-05T23:30' },
+        // Mesmo instante das 23:30 locais de 05/10, gravado em UTC
+        { id: 'noite-utc', dataHora: '2026-10-06T02:30:00.000Z' },
+        { id: 'amanha-cedo', dataHora: '2026-10-06T00:15' },
+        { id: 'amanha', dataHora: '2026-10-06T09:00' },
+        { id: 'ontem-noite', dataHora: '2026-10-04T23:30' },
+        { id: 'invalido', dataHora: 'abc' }
+    ]);
+    const esperado = ['manha', 'noite', 'noite-utc'];
+    assert.deepEqual(ids(AgendaService.getPorData(new Date(2026, 9, 5, 22, 0))).sort(), esperado);
+    assert.deepEqual(ids(AgendaService.getPorData(new Date(2026, 9, 5, 0, 0))).sort(), esperado);
+    assert.deepEqual(ids(AgendaService.getPorData(new Date(2026, 9, 5, 23, 59))).sort(), esperado);
+});
+
+test('AgendaService.getHoje às 22h conta os mesmos agendamentos de hoje do card Avisos', () => {
+    clientes([{ nome: 'Ana' }]);
+    agendamentos([
+        { id: 'manha', dataHora: '2026-10-05T10:00', status: 'concluido' },
+        { id: 'noite', dataHora: '2026-10-05T23:30' },
+        { id: 'amanha', dataHora: '2026-10-06T09:00' }
+    ]);
+    const noite = new Date(2026, 9, 5, 22, 0);
+    mock.timers.enable({ apis: ['Date'], now: noite });
+    try {
+        assert.deepEqual(ids(AgendaService.getHoje()).sort(), ['manha', 'noite']);
+        // O card só mostra o que ainda não passou; o que ele mostra tem de estar em "hoje"
+        assert.deepEqual(ids(NotificacoesService.agendamentosDoDia(noite, 0)), ['noite']);
+    } finally {
+        mock.timers.reset();
+    }
 });
 
 test('resumo separa hoje e semana e soma o total', () => {

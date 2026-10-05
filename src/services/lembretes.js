@@ -115,6 +115,8 @@ Gabriela Rincão`
         
         return agendamentos.filter(ag => {
             if (ag.status !== 'agendado' && ag.status !== 'confirmado') return false;
+            // Quem já recebeu não volta para a lista (mesma conta do card Avisos)
+            if (ag.lembreteEnviado === true) return false;
             
             const dataAgendamento = new Date(ag.dataHora);
             return dataAgendamento >= amanha && dataAgendamento < depoisDeAmanha;

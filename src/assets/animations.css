@@ -126,6 +126,10 @@
     border-left-color: var(--success);
 }
 
+.toast-info {
+    border-left-color: var(--info);
+}
+
 .toast-error {
     border-left-color: var(--danger);
 }

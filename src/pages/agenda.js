@@ -477,7 +477,7 @@ export class AgendaPage {
     cancelarAgendamento(id) {
         Modal.confirm('Tem certeza que deseja cancelar este agendamento?', () => {
             AgendaService.cancelar(id);
-            Toast.success('Agendamento cancelado.');
+            Toast.info('Agendamento cancelado.');
             this.renderView();
         });
     }

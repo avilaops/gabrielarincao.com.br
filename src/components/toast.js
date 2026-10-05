@@ -14,6 +14,15 @@ export class Toast {
         return container;
     }
 
+    // Leitor de tela só anuncia o que entra numa região aria-live que já existia
+    static init() {
+        if (document.body) {
+            this.getContainer();
+        } else {
+            document.addEventListener('DOMContentLoaded', () => this.getContainer());
+        }
+    }
+
     static show(mensagem, tipo = 'info', duracaoMs = 4000) {
         const toast = document.createElement('div');
         toast.className = `toast toast-${tipo}`;
@@ -34,6 +43,10 @@ export class Toast {
         return this.show(mensagem, 'success', duracaoMs);
     }
 
+    static info(mensagem, duracaoMs) {
+        return this.show(mensagem, 'info', duracaoMs);
+    }
+
     static error(mensagem, duracaoMs) {
         return this.show(mensagem, 'error', duracaoMs);
     }
@@ -41,4 +54,9 @@ export class Toast {
     static warning(mensagem, duracaoMs) {
         return this.show(mensagem, 'warning', duracaoMs);
     }
+}
+
+// Na carga da página (os testes rodam em Node, sem document)
+if (typeof document !== 'undefined') {
+    Toast.init();
 }
