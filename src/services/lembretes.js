@@ -154,7 +154,11 @@ Gabriela Rincão`
 
     // Gerar link do WhatsApp com mensagem
     static gerarLinkWhatsApp(telefone, mensagem) {
-        const telefoneFormatado = telefone.replace(/\D/g, '');
+        if (telefone === undefined || telefone === null || telefone === '') {
+            throw new Error('Cliente sem telefone cadastrado');
+        }
+        // Backup editado à mão pode trazer o telefone como número
+        const telefoneFormatado = String(telefone).replace(/\D/g, '');
         const mensagemEncoded = encodeURIComponent(mensagem);
         return `https://wa.me/55${telefoneFormatado}?text=${mensagemEncoded}`;
     }

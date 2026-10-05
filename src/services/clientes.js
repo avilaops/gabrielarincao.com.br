@@ -60,7 +60,8 @@ export class ClienteService {
         const lowerQuery = query.toLowerCase();
         return this.getAll().filter(cliente => 
             cliente.nome.toLowerCase().includes(lowerQuery) ||
-            (cliente.telefone && cliente.telefone.includes(query)) ||
+            // Backup editado à mão pode trazer o telefone como número
+            (cliente.telefone && String(cliente.telefone).includes(query)) ||
             (cliente.instagram && cliente.instagram.toLowerCase().includes(lowerQuery))
         );
     }

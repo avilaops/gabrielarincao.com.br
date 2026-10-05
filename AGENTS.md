@@ -55,5 +55,6 @@ descrito em outro arquivo deste repositório (`GIT_COMMANDS.md`, `COMMANDS.md` e
 ## Pendências conhecidas
 
 - `src/services/auth.js` tem credencial fixa em código público. Tratar em tarefa própria.
-- `src/pages/clientes.js` lê `resultado.sucesso`, mas `ImportacaoService` devolve
-  `importados`: o resumo da importação mostra "undefined" e a lista não recarrega.
+- A importação de contatos (`ImportacaoService.importarArquivo`, `.vcf` e `.csv`) e o
+  envio de lembrete só têm teste de serviço: `FileReader` e DOM não existem no Node.
+  Falta uma conferência no navegador com arquivo real.

@@ -488,9 +488,9 @@ export class AgendaPage {
 
     showLembretesModal() {
         // Reabrir depois de um envio não pode empilhar outro modal por cima
-        if (this.lembretesModalId) {
-            document.getElementById(this.lembretesModalId)?.remove();
-            this.lembretesModalId = null;
+        if (this.lembretesModal) {
+            this.lembretesModal.remove();
+            this.lembretesModal = null;
         }
 
         const agendamentos = LembretesService.getAgendamentosParaLembrete();
@@ -501,7 +501,6 @@ export class AgendaPage {
         }
 
         const modalId = 'modal-lembretes-' + Date.now();
-        this.lembretesModalId = modalId;
         const modal = new Modal({
             id: modalId,
             title: `🔔 Enviar Lembretes (${agendamentos.length} agendamento${agendamentos.length > 1 ? 's' : ''})`,
@@ -519,6 +518,7 @@ export class AgendaPage {
             `
         });
 
+        this.lembretesModal = modal;
         modal.show();
 
         // Renderizar lista de lembretes
