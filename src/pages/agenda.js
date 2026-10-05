@@ -324,7 +324,7 @@ export class AgendaPage {
                     <div>
                         <div class="flex gap-sm mb-sm">
                             <strong style="font-size: 1.2rem;">${time}</strong>
-                            <span class="badge badge-${statusColors[agendamento.status]}">${statusLabels[agendamento.status]}</span>
+                            <span class="badge badge-${Utils.sanitizeHTML(statusColors[agendamento.status])}">${Utils.sanitizeHTML(statusLabels[agendamento.status])}</span>
                         </div>
                         <p><strong>Cliente:</strong> ${Utils.sanitizeHTML(agendamento.cliente?.nome || 'N/A')}</p>
                         <p><strong>Serviço:</strong> ${Utils.sanitizeHTML(agendamento.servico)}</p>
@@ -333,20 +333,20 @@ export class AgendaPage {
                     </div>
                     <div class="flex flex-column gap-sm">
                         ${agendamento.status === 'agendado' ? `
-                            <button class="btn btn-sm btn-primary" data-action="confirmar" data-id="${agendamento.id}">
+                            <button class="btn btn-sm btn-primary" data-action="confirmar" data-id="${Utils.sanitizeHTML(agendamento.id)}">
                                 Confirmar
                             </button>
                         ` : ''}
                         ${agendamento.status === 'confirmado' ? `
-                            <button class="btn btn-sm btn-primary" data-action="concluir" data-id="${agendamento.id}">
+                            <button class="btn btn-sm btn-primary" data-action="concluir" data-id="${Utils.sanitizeHTML(agendamento.id)}">
                                 Concluir
                             </button>
                         ` : ''}
-                        <button class="btn btn-sm btn-outline" data-action="editar" data-id="${agendamento.id}">
+                        <button class="btn btn-sm btn-outline" data-action="editar" data-id="${Utils.sanitizeHTML(agendamento.id)}">
                             Editar
                         </button>
                         ${agendamento.status !== 'cancelado' && agendamento.status !== 'concluido' ? `
-                            <button class="btn btn-sm btn-outline" style="border-color: var(--danger); color: var(--danger);" data-action="cancelar" data-id="${agendamento.id}">
+                            <button class="btn btn-sm btn-outline" style="border-color: var(--danger); color: var(--danger);" data-action="cancelar" data-id="${Utils.sanitizeHTML(agendamento.id)}">
                                 Cancelar
                             </button>
                         ` : ''}
@@ -377,7 +377,7 @@ export class AgendaPage {
                         <select class="form-select" name="clienteId" required>
                             <option value="">Selecione um cliente</option>
                             ${clientes.map(c => `
-                                <option value="${c.id}" ${agendamento?.clienteId === c.id ? 'selected' : ''}>
+                                <option value="${Utils.sanitizeHTML(c.id)}" ${agendamento?.clienteId === c.id ? 'selected' : ''}>
                                     ${Utils.sanitizeHTML(c.nome)}
                                 </option>
                             `).join('')}
@@ -386,7 +386,7 @@ export class AgendaPage {
 
                     <div class="form-group">
                         <label class="form-label">Data e Hora *</label>
-                        <input type="datetime-local" class="form-input" name="dataHora" value="${dataHora}" required>
+                        <input type="datetime-local" class="form-input" name="dataHora" value="${Utils.sanitizeHTML(dataHora)}" required>
                     </div>
 
                     <div class="form-group">
@@ -404,7 +404,7 @@ export class AgendaPage {
 
                     <div class="form-group">
                         <label class="form-label">Valor *</label>
-                        <input type="number" class="form-input" name="valor" value="${agendamento?.valor || ''}" step="0.01" min="0" required>
+                        <input type="number" class="form-input" name="valor" value="${Utils.sanitizeHTML(agendamento?.valor || '')}" step="0.01" min="0" required>
                     </div>
 
                     <div class="form-group">
@@ -520,7 +520,7 @@ export class AgendaPage {
                 <div class="card mb-sm" style="padding: 16px;">
                     <div class="flex flex-between" style="align-items: start;">
                         <div style="flex: 1;">
-                            <strong>${ag.cliente.nome}</strong>
+                            <strong>${Utils.sanitizeHTML(ag.cliente?.nome || 'N/A')}</strong>
                             <p style="margin: 4px 0; color: var(--text-secondary); font-size: 0.9rem;">
                                 ${new Date(ag.dataHora).toLocaleString('pt-BR', { 
                                     weekday: 'long',
@@ -531,29 +531,39 @@ export class AgendaPage {
                                 })}
                             </p>
                             <p style="margin: 4px 0; color: var(--text-secondary); font-size: 0.9rem;">
-                                ${ag.servico}
+                                ${Utils.sanitizeHTML(ag.servico)}
                             </p>
                             ${ag.lembreteEnviado ? '<span class="badge badge-success">✅ Lembrete já enviado</span>' : ''}
                         </div>
-                        <select class="form-select" id="template-${ag.id}" style="width: auto; min-width: 150px; margin-right: 8px;">
+                        <select class="form-select" data-lembrete-template="${Utils.sanitizeHTML(ag.id)}" style="width: auto; min-width: 150px; margin-right: 8px;">
                             ${LembretesService.getTemplates().map(t => `
-                                <option value="${t.id}">${t.nome}</option>
+                                <option value="${Utils.sanitizeHTML(t.id)}">${Utils.sanitizeHTML(t.nome)}</option>
                             `).join('')}
                         </select>
-                        <button class="btn btn-sm btn-primary" onclick="window.agendaPage.enviarLembrete('${ag.id}', '${ag.clienteId}')">
+                        <button class="btn btn-sm btn-primary" data-lembrete-enviar="${Utils.sanitizeHTML(ag.id)}" data-cliente-id="${Utils.sanitizeHTML(ag.clienteId)}">
                             📱 Enviar
                         </button>
                     </div>
                 </div>
             `).join('');
+
+            // O id vai por atributo de dados, nunca dentro de código inline
+            list.querySelectorAll('[data-lembrete-enviar]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const templateSelect = btn.parentElement.querySelector('[data-lembrete-template]');
+                    this.enviarLembrete(
+                        btn.getAttribute('data-lembrete-enviar'),
+                        btn.getAttribute('data-cliente-id'),
+                        templateSelect?.value
+                    );
+                });
+            });
         }
     }
 
-    enviarLembrete(agendamentoId, clienteId) {
+    enviarLembrete(agendamentoId, clienteId, templateId = 'padrao') {
         const agendamento = AgendaService.getById(agendamentoId);
         const cliente = ClienteService.getById(clienteId);
-        const templateSelect = document.getElementById(`template-${agendamentoId}`);
-        const templateId = templateSelect?.value || 'padrao';
         
         const link = LembretesService.enviarLembrete(agendamento, cliente, templateId);
         window.open(link, '_blank');

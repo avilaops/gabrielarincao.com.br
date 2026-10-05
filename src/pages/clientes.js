@@ -164,23 +164,23 @@ export class ClientesPage {
 
     renderClienteRow(cliente) {
         const dataNasc = cliente.dataNascimento ? new Date(cliente.dataNascimento).toLocaleDateString('pt-BR') : '-';
-        const totalProcedimentos = cliente.historico ? cliente.historico.length : 0;
+        const totalProcedimentos = Array.isArray(cliente.historico) ? cliente.historico.length : 0;
 
         return `
             <tr>
                 <td data-label="Nome"><strong>${Utils.sanitizeHTML(cliente.nome)}</strong></td>
-                <td data-label="Telefone">${Utils.formatPhone(cliente.telefone)}</td>
+                <td data-label="Telefone">${Utils.sanitizeHTML(Utils.formatPhone(cliente.telefone))}</td>
                 <td data-label="Instagram">${Utils.sanitizeHTML(cliente.instagram || '-')}</td>
                 <td data-label="Aniversário">${dataNasc}</td>
                 <td data-label="Procedimentos">${totalProcedimentos}</td>
                 <td data-label="Ações" style="display: flex; gap: 8px; flex-wrap: wrap;">
-                    <button class="btn btn-sm btn-outline" data-action="details" data-id="${cliente.id}">
+                    <button class="btn btn-sm btn-outline" data-action="details" data-id="${Utils.sanitizeHTML(cliente.id)}">
                         Ver Detalhes
                     </button>
-                    <button class="btn btn-sm btn-secondary" data-action="edit" data-id="${cliente.id}">
+                    <button class="btn btn-sm btn-secondary" data-action="edit" data-id="${Utils.sanitizeHTML(cliente.id)}">
                         Editar
                     </button>
-                    <button class="btn btn-sm btn-outline" style="border-color: var(--danger); color: var(--danger);" data-action="delete" data-id="${cliente.id}">
+                    <button class="btn btn-sm btn-outline" style="border-color: var(--danger); color: var(--danger);" data-action="delete" data-id="${Utils.sanitizeHTML(cliente.id)}">
                         Excluir
                     </button>
                 </td>
@@ -324,7 +324,7 @@ export class ClientesPage {
                     this.loadClientes();
                 } catch (error) {
                     Utils.log('Erro ao salvar cliente', error);
-                    Modal.alert('Erro ao salvar cliente: ' + error.message, 'Erro');
+                    Modal.alert('Erro ao salvar cliente: ' + Utils.sanitizeHTML(error.message), 'Erro');
                 }
             });
         };
@@ -345,13 +345,13 @@ export class ClientesPage {
         const modalId = 'modal-details-' + Date.now();
         const modal = new Modal({
             id: modalId,
-            title: cliente.nome,
+            title: Utils.sanitizeHTML(cliente.nome),
             content: `
                 <div class="mb-6">
-                    <p><strong>Telefone:</strong> ${this.formatPhone(cliente.telefone)}</p>
-                    <p><strong>Instagram:</strong> ${cliente.instagram || '-'}</p>
+                    <p><strong>Telefone:</strong> ${Utils.sanitizeHTML(Utils.formatPhone(cliente.telefone))}</p>
+                    <p><strong>Instagram:</strong> ${Utils.sanitizeHTML(cliente.instagram || '-')}</p>
                     <p><strong>Aniversário:</strong> ${cliente.dataNascimento ? new Date(cliente.dataNascimento).toLocaleDateString('pt-BR') : '-'}</p>
-                    ${cliente.observacoes ? `<p><strong>Observações:</strong> ${cliente.observacoes}</p>` : ''}
+                    ${cliente.observacoes ? `<p><strong>Observações:</strong> ${Utils.sanitizeHTML(cliente.observacoes)}</p>` : ''}
                 </div>
 
                 <div class="card mb-6">
@@ -375,7 +375,7 @@ export class ClientesPage {
                                 ${historico.sort((a, b) => new Date(b.data) - new Date(a.data)).map(h => `
                                     <tr>
                                         <td data-label="Data">${new Date(h.data).toLocaleDateString('pt-BR')}</td>
-                                        <td data-label="Serviço">${h.servico}</td>
+                                        <td data-label="Serviço">${Utils.sanitizeHTML(h.servico)}</td>
                                         <td data-label="Valor">${Utils.formatCurrency(h.valor)}</td>
                                     </tr>
                                 `).join('')}
@@ -406,13 +406,13 @@ export class ClientesPage {
         const cliente = ClienteService.getById(clienteId);
         if (!cliente) return;
 
-        Modal.confirm(`Tem certeza que deseja excluir o cliente "${cliente.nome}"?`, () => {
+        Modal.confirm(`Tem certeza que deseja excluir o cliente "${Utils.sanitizeHTML(cliente.nome)}"?`, () => {
             try {
                 ClienteService.delete(clienteId);
                 Modal.alert('Cliente excluído com sucesso!', 'Sucesso');
                 this.loadClientes();
             } catch (error) {
-                Modal.alert('Erro ao excluir cliente: ' + error.message, 'Erro');
+                Modal.alert('Erro ao excluir cliente: ' + Utils.sanitizeHTML(error.message), 'Erro');
             }
         });
     }
@@ -469,13 +469,13 @@ export class ClientesPage {
                         resultDiv.style.color = resultado.erros.length > 0 ? '#856404' : '#155724';
                         resultDiv.innerHTML = `
                             <h4 style="margin: 0 0 8px 0;">Importação Concluída</h4>
-                            <p style="margin: 4px 0;">✅ ${resultado.sucesso} contato(s) importado(s)</p>
+                            <p style="margin: 4px 0;">✅ ${Utils.sanitizeHTML(resultado.sucesso)} contato(s) importado(s)</p>
                             ${resultado.erros.length > 0 ? `<p style="margin: 4px 0;">❌ ${resultado.erros.length} erro(s)</p>` : ''}
                             ${resultado.erros.length > 0 ? `
                                 <details style="margin-top: 8px;">
                                     <summary style="cursor: pointer;">Ver erros</summary>
                                     <ul style="margin: 8px 0; padding-left: 20px;">
-                                        ${resultado.erros.map(e => `<li>${e}</li>`).join('')}
+                                        ${resultado.erros.map(e => `<li>${Utils.sanitizeHTML(e?.erro ? `Linha ${e.linha}: ${e.erro}` : e)}</li>`).join('')}
                                     </ul>
                                 </details>
                             ` : ''}
@@ -493,7 +493,7 @@ export class ClientesPage {
                         }
                     }, 2000);
                 } catch (error) {
-                    Modal.alert('Erro ao importar arquivo: ' + error.message);
+                    Modal.alert('Erro ao importar arquivo: ' + Utils.sanitizeHTML(error.message));
                     btnConfirmar.disabled = false;
                     btnConfirmar.textContent = 'Importar';
                 }

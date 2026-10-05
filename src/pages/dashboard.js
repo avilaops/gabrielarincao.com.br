@@ -232,8 +232,8 @@ export class DashboardPage {
             return `
                 <div class="flex flex-between mb-sm" style="padding: 12px; background: var(--background); border-radius: var(--radius-sm);">
                     <div>
-                        <div><strong>${agendamento.cliente?.nome || 'N/A'}</strong></div>
-                        <div class="text-muted" style="font-size: 0.85rem;">${agendamento.servico}</div>
+                        <div><strong>${Utils.sanitizeHTML(agendamento.cliente?.nome || 'N/A')}</strong></div>
+                        <div class="text-muted" style="font-size: 0.85rem;">${Utils.sanitizeHTML(agendamento.servico)}</div>
                     </div>
                     <div class="text-right">
                         <div class="text-primary"><strong>${dateStr}</strong></div>
@@ -265,8 +265,8 @@ export class DashboardPage {
             return `
                 <div class="flex flex-between mb-sm" style="padding: 12px; background: var(--background); border-radius: var(--radius-sm);">
                     <div>
-                        <div><strong>${cliente.nome}</strong></div>
-                        <div class="text-muted" style="font-size: 0.85rem;">${this.formatPhone(cliente.telefone)}</div>
+                        <div><strong>${Utils.sanitizeHTML(cliente.nome)}</strong></div>
+                        <div class="text-muted" style="font-size: 0.85rem;">${Utils.sanitizeHTML(this.formatPhone(cliente.telefone))}</div>
                     </div>
                     <div class="text-right">
                         <div class="text-primary">${dateStr}</div>
@@ -303,9 +303,9 @@ export class DashboardPage {
                     return `
                         <div class="card">
                             <div style="font-size: 2rem; margin-bottom: 8px;">🎂</div>
-                            <div><strong>${cliente.nome}</strong></div>
+                            <div><strong>${Utils.sanitizeHTML(cliente.nome)}</strong></div>
                             <div class="text-primary">${dia} de ${mes}</div>
-                            <div class="text-muted" style="font-size: 0.85rem;">${this.formatPhone(cliente.telefone)}</div>
+                            <div class="text-muted" style="font-size: 0.85rem;">${Utils.sanitizeHTML(this.formatPhone(cliente.telefone))}</div>
                         </div>
                     `;
                 }).join('')}

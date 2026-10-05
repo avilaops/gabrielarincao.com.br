@@ -161,6 +161,16 @@ const casosInvalidos = {
         const backup = backupValido();
         backup.dados.CLIENTES.push({ id: 42, nome: 'Carla' });
         return backup;
+    },
+    'id repetido em CLIENTES': () => {
+        const backup = backupValido();
+        backup.dados.CLIENTES.push({ id: 'c1', nome: 'Outra Ana' });
+        return backup;
+    },
+    'id repetido em PAGAMENTOS': () => {
+        const backup = backupValido();
+        backup.dados.PAGAMENTOS.push({ id: 'p1', clienteId: 'c2', valor: 50 });
+        return backup;
     }
 };
 
@@ -183,6 +193,23 @@ for (const [nome, montar] of Object.entries(casosInvalidos)) {
         assert.deepEqual(estadoBruto(), antes);
     });
 }
+
+test('validar aponta a lista que tem id repetido', () => {
+    const backup = backupValido();
+    backup.dados.AGENDAMENTOS.push({ id: 'a1', clienteId: 'c2', servico: 'Henna', valor: 60 });
+
+    assert.deepEqual(BackupService.validar(backup), {
+        ok: false,
+        erro: 'O backup tem registros repetidos (agendamentos).'
+    });
+});
+
+test('validar aceita o mesmo id em listas diferentes', () => {
+    const backup = backupValido();
+    backup.dados.PAGAMENTOS.push({ id: 'c1', clienteId: 'c1', valor: 30 });
+
+    assert.equal(BackupService.validar(backup).ok, true);
+});
 
 test('restaurar ignora chaves desconhecidas dentro de dados', () => {
     const backup = backupValido();

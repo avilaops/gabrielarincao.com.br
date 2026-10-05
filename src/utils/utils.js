@@ -2,13 +2,16 @@
 export class Utils {
     /**
      * Sanitiza string para prevenir XSS
-     * Remove tags HTML e caracteres especiais perigosos
+     * Escapa os caracteres especiais de HTML, inclusive aspas (uso em atributos)
      */
     static sanitizeHTML(str) {
-        if (!str) return '';
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
+        if (str === null || str === undefined) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
     }
 
     /**

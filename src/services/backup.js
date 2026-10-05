@@ -54,6 +54,10 @@ export class BackupService {
             if (!itensValidos) {
                 return { ok: false, erro: `O backup tem registros inválidos (${nome.toLowerCase()}).` };
             }
+            // Id repetido faria update/delete agir só no primeiro registro
+            if (new Set(lista.map(item => item.id)).size !== lista.length) {
+                return { ok: false, erro: `O backup tem registros repetidos (${nome.toLowerCase()}).` };
+            }
         }
 
         const config = obj.dados.CONFIG;
