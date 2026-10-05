@@ -4,6 +4,8 @@ import { Chart } from '../components/chart.js';
 import { ClienteService } from '../services/clientes.js';
 import { AgendaService } from '../services/agenda.js';
 import { FinanceiroService } from '../services/financeiro.js';
+import { BackupService } from '../services/backup.js';
+import { Modal } from '../components/modal.js';
 import { Utils } from '../utils/utils.js';
 
 export class DashboardPage {
@@ -16,6 +18,8 @@ export class DashboardPage {
                 padding: 24px;
             ">
                 <h1 class="mb-lg">Dashboard</h1>
+
+                <div id="backup-lembrete"></div>
 
                 <div id="stats-container"></div>
 
@@ -47,6 +51,8 @@ export class DashboardPage {
                     <h3 class="mb-md">Aniversariantes do Mês</h3>
                     <div id="aniversariantes"></div>
                 </div>
+
+                <div id="backup-card" style="margin-top: 24px;"></div>
             </div>
         `;
     }
@@ -57,6 +63,118 @@ export class DashboardPage {
         this.renderClientesRecentes();
         this.renderAniversariantes();
         this.renderCharts();
+        this.renderBackup();
+    }
+
+    // Card de backup: em destaque no topo quando há lembrete, no fim da página caso contrário
+    renderBackup() {
+        const topo = document.getElementById('backup-lembrete');
+        const rodape = document.getElementById('backup-card');
+        if (!topo || !rodape) return;
+
+        const lembrar = BackupService.precisaLembrar();
+        const dias = BackupService.diasDesdeUltimo();
+        const ultimo = BackupService.ultimoBackup();
+        const ultimoStr = ultimo ? ultimo.toLocaleDateString('pt-BR') : 'nunca feito';
+
+        let aviso = '';
+        if (lembrar) {
+            const texto = dias === null
+                ? 'Você ainda não fez backup'
+                : `Faz ${dias} dias sem backup`;
+            aviso = `<p style="margin-bottom: 8px;"><strong>⚠️ ${texto}</strong></p>`;
+        }
+
+        const destaque = lembrar
+            ? 'margin-bottom: 24px; border: 2px solid var(--warning); background: var(--warning-light);'
+            : '';
+
+        const html = `
+            <div class="card" style="${destaque}">
+                <h3 class="mb-md">Backup dos dados</h3>
+                ${aviso}
+                <p class="text-muted mb-md">
+                    Último backup: <strong>${Utils.sanitizeHTML(ultimoStr)}</strong>.
+                    Os dados ficam só neste navegador; guarde o arquivo em local seguro.
+                </p>
+                <div class="flex" style="gap: 12px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" data-backup-baixar>Baixar backup</button>
+                    <button class="btn btn-outline" data-backup-restaurar>Restaurar backup</button>
+                    <input type="file" accept=".json,application/json" data-backup-arquivo style="display: none;">
+                </div>
+            </div>
+        `;
+
+        topo.innerHTML = lembrar ? html : '';
+        rodape.innerHTML = lembrar ? '' : html;
+
+        const card = lembrar ? topo : rodape;
+        const arquivo = card.querySelector('[data-backup-arquivo]');
+
+        card.querySelector('[data-backup-baixar]').addEventListener('click', () => this.baixarBackup());
+        card.querySelector('[data-backup-restaurar]').addEventListener('click', () => arquivo.click());
+        arquivo.addEventListener('change', () => {
+            const selecionado = arquivo.files[0];
+            arquivo.value = '';
+            if (selecionado) this.restaurarBackup(selecionado);
+        });
+    }
+
+    baixarBackup() {
+        const agora = new Date();
+        const conteudo = JSON.stringify(BackupService.gerar(agora), null, 2);
+
+        // Criar blob e fazer download
+        const blob = new Blob([conteudo], { type: 'application/json' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = BackupService.nomeArquivo(agora);
+        a.click();
+        window.URL.revokeObjectURL(url);
+
+        BackupService.registrarFeito(agora);
+        this.renderBackup();
+    }
+
+    async restaurarBackup(arquivo) {
+        if (!BackupService.tamanhoAceito(arquivo.size)) {
+            Modal.alert('O arquivo é maior que 10 MB e não foi lido.', 'Backup inválido');
+            return;
+        }
+
+        let leitura;
+        try {
+            leitura = BackupService.interpretar(await arquivo.text());
+        } catch (error) {
+            leitura = { ok: false, erro: 'Não foi possível ler o arquivo.' };
+        }
+
+        if (!leitura.ok) {
+            Modal.alert(Utils.sanitizeHTML(leitura.erro), 'Backup inválido');
+            return;
+        }
+
+        const { clientes, agendamentos, pagamentos } = leitura.resumo;
+        const geradoEm = new Date(leitura.backup.geradoEm);
+        const dataArquivo = Number.isNaN(geradoEm.getTime())
+            ? 'data desconhecida'
+            : geradoEm.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+
+        Modal.confirm(`
+            <strong>Restaurar backup de ${Utils.sanitizeHTML(dataArquivo)}</strong><br><br>
+            ${Number(clientes)} clientes<br>
+            ${Number(agendamentos)} agendamentos<br>
+            ${Number(pagamentos)} pagamentos<br><br>
+            <strong>Atenção:</strong> os dados atuais serão substituídos pelos do arquivo.
+        `, () => {
+            const resultado = BackupService.restaurar(leitura.backup);
+            if (!resultado.ok) {
+                Modal.alert(Utils.sanitizeHTML(resultado.erro), 'Backup não restaurado');
+                return;
+            }
+            window.location.reload();
+        });
     }
 
     renderStats() {

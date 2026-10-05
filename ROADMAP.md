@@ -19,8 +19,8 @@ Sugestões de melhorias futuras para o sistema Gabriela.
 ## 🎯 Versão 1.1.0 - Melhorias Rápidas
 
 ### Prioridade Alta 🔴
-- [ ] **Backup Automático**
-  - Exportar dados automaticamente a cada 7 dias
+- [x] **Backup Automático**
+  - Lembrete automático a cada 7 dias, com download em um clique
   - Opção de download de backup em JSON
   - Importação de backup
 
