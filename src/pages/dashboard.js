@@ -5,6 +5,7 @@ import { ClienteService } from '../services/clientes.js';
 import { AgendaService } from '../services/agenda.js';
 import { FinanceiroService } from '../services/financeiro.js';
 import { BackupService } from '../services/backup.js';
+import { NotificacoesService } from '../services/notificacoes.js';
 import { Modal } from '../components/modal.js';
 import { Utils } from '../utils/utils.js';
 
@@ -20,6 +21,8 @@ export class DashboardPage {
                 <h1 class="mb-lg">Dashboard</h1>
 
                 <div id="backup-lembrete"></div>
+
+                <div id="avisos"></div>
 
                 <div id="stats-container"></div>
 
@@ -58,12 +61,60 @@ export class DashboardPage {
     }
 
     init() {
+        this.renderAvisos();
         this.renderStats();
         this.renderProximosAgendamentos();
         this.renderClientesRecentes();
         this.renderAniversariantes();
         this.renderCharts();
         this.renderBackup();
+    }
+
+    // Card "Avisos": só aparece quando há algo para avisar
+    renderAvisos() {
+        const container = document.getElementById('avisos');
+        if (!container) return;
+
+        const resumo = NotificacoesService.resumo(new Date());
+        const plural = (n) => `${n} ${n === 1 ? 'agendamento' : 'agendamentos'}`;
+        const linhas = [];
+
+        resumo.aniversariantesHoje.forEach(cliente => {
+            linhas.push(`🎂 Hoje é aniversário de <strong>${Utils.sanitizeHTML(cliente.nome)}</strong>`);
+        });
+
+        if (resumo.agendamentosHoje.length > 0) {
+            const proximo = resumo.agendamentosHoje[0];
+            const hora = new Date(proximo.dataHora).toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            linhas.push(`📅 ${plural(resumo.agendamentosHoje.length)} hoje — próximo às ${hora} com <strong>${Utils.sanitizeHTML(proximo.cliente?.nome || 'N/A')}</strong>`);
+        }
+
+        if (resumo.lembretesPendentes.length > 0) {
+            linhas.push(`🔔 <a href="#/agenda" data-link>${plural(resumo.lembretesPendentes.length)} amanhã sem lembrete enviado</a>`);
+        }
+
+        if (resumo.aniversariantesSemana.length > 0) {
+            const nomes = resumo.aniversariantesSemana.map(cliente => {
+                const data = cliente.aniversario.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+                return `${Utils.sanitizeHTML(cliente.nome)} (${data})`;
+            }).join(', ');
+            linhas.push(`🎁 Aniversários nos próximos 7 dias: ${nomes}`);
+        }
+
+        if (linhas.length === 0) {
+            container.innerHTML = '';
+            return;
+        }
+
+        container.innerHTML = `
+            <div class="card mb-lg">
+                <h3 class="mb-md">Avisos</h3>
+                ${linhas.map(linha => `<p style="margin-bottom: 8px;">${linha}</p>`).join('')}
+            </div>
+        `;
     }
 
     // Card de backup: em destaque no topo quando há lembrete, no fim da página caso contrário
@@ -288,15 +339,15 @@ export class DashboardPage {
         }
 
         aniversariantes.sort((a, b) => {
-            const dayA = new Date(a.dataNascimento).getDate();
-            const dayB = new Date(b.dataNascimento).getDate();
+            const dayA = Utils.parseDataLocal(a.dataNascimento).getDate();
+            const dayB = Utils.parseDataLocal(b.dataNascimento).getDate();
             return dayA - dayB;
         });
 
         container.innerHTML = `
             <div class="grid grid-3">
                 ${aniversariantes.map(cliente => {
-                    const date = new Date(cliente.dataNascimento);
+                    const date = Utils.parseDataLocal(cliente.dataNascimento);
                     const dia = date.getDate();
                     const mes = date.toLocaleDateString('pt-BR', { month: 'short' });
 

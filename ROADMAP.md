@@ -24,7 +24,7 @@ Sugestões de melhorias futuras para o sistema Gabriela.
   - Opção de download de backup em JSON
   - Importação de backup
 
-- [ ] **Notificações**
+- [x] **Notificações**
   - Lembrete de aniversariantes
   - Alertas de agendamentos próximos
   - Confirmação de ações

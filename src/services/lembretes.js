@@ -114,7 +114,7 @@ Gabriela Rincão`
         const agendamentos = AgendaService.getAll();
         
         return agendamentos.filter(ag => {
-            if (ag.status !== 'pendente' && ag.status !== 'confirmado') return false;
+            if (ag.status !== 'agendado' && ag.status !== 'confirmado') return false;
             
             const dataAgendamento = new Date(ag.dataHora);
             return dataAgendamento >= amanha && dataAgendamento < depoisDeAmanha;

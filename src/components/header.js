@@ -1,5 +1,6 @@
 // Componente de Header
 import { authService } from '../services/auth.js';
+import { Modal } from './modal.js';
 import { Utils } from '../utils/utils.js';
 
 export class Header {
@@ -169,10 +170,10 @@ export class Header {
 
         const handleLogout = (e) => {
             e.preventDefault();
-            if (confirm('Deseja realmente sair do sistema?')) {
+            Modal.confirm('Deseja realmente sair do sistema?', () => {
                 authService.logout();
                 window.location.hash = '#/';
-            }
+            });
         };
 
         if (logoutBtn) {

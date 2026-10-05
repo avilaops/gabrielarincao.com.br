@@ -1,6 +1,7 @@
 // Página de gestão de clientes - CORRIGIDA
 import { Header } from '../components/header.js';
 import { Modal } from '../components/modal.js';
+import { Toast } from '../components/toast.js';
 import { ClienteService } from '../services/clientes.js';
 import { ImportacaoService } from '../services/importacao.js';
 import { Utils } from '../utils/utils.js';
@@ -163,7 +164,7 @@ export class ClientesPage {
     }
 
     renderClienteRow(cliente) {
-        const dataNasc = cliente.dataNascimento ? new Date(cliente.dataNascimento).toLocaleDateString('pt-BR') : '-';
+        const dataNasc = Utils.parseDataLocal(cliente.dataNascimento)?.toLocaleDateString('pt-BR') ?? '-';
         const totalProcedimentos = Array.isArray(cliente.historico) ? cliente.historico.length : 0;
 
         return `
@@ -313,11 +314,11 @@ export class ClientesPage {
                 try {
                     if (isEdit) {
                         ClienteService.update(clienteId, payload);
-                        Modal.alert('Cliente atualizado com sucesso!', 'Sucesso');
+                        Toast.success('Cliente atualizado com sucesso!');
                     } else {
                         const novoCliente = ClienteService.create(payload);
                         Utils.log('Cliente cadastrado com sucesso', novoCliente);
-                        Modal.alert('Cliente cadastrado com sucesso!', 'Sucesso');
+                        Toast.success('Cliente cadastrado com sucesso!');
                     }
 
                     modal.close();
@@ -350,7 +351,7 @@ export class ClientesPage {
                 <div class="mb-6">
                     <p><strong>Telefone:</strong> ${Utils.sanitizeHTML(Utils.formatPhone(cliente.telefone))}</p>
                     <p><strong>Instagram:</strong> ${Utils.sanitizeHTML(cliente.instagram || '-')}</p>
-                    <p><strong>Aniversário:</strong> ${cliente.dataNascimento ? new Date(cliente.dataNascimento).toLocaleDateString('pt-BR') : '-'}</p>
+                    <p><strong>Aniversário:</strong> ${Utils.parseDataLocal(cliente.dataNascimento)?.toLocaleDateString('pt-BR') ?? '-'}</p>
                     ${cliente.observacoes ? `<p><strong>Observações:</strong> ${Utils.sanitizeHTML(cliente.observacoes)}</p>` : ''}
                 </div>
 
@@ -409,7 +410,7 @@ export class ClientesPage {
         Modal.confirm(`Tem certeza que deseja excluir o cliente "${Utils.sanitizeHTML(cliente.nome)}"?`, () => {
             try {
                 ClienteService.delete(clienteId);
-                Modal.alert('Cliente excluído com sucesso!', 'Sucesso');
+                Toast.success('Cliente excluído com sucesso!');
                 this.loadClientes();
             } catch (error) {
                 Modal.alert('Erro ao excluir cliente: ' + Utils.sanitizeHTML(error.message), 'Erro');
@@ -540,13 +541,13 @@ export class ClientesPage {
         document.getElementById('btn-export-vcf')?.addEventListener('click', () => {
             ImportacaoService.exportarVCF(clientes);
             document.getElementById(modalId)?.remove();
-            Modal.alert('Arquivo VCF exportado com sucesso!', 'Sucesso');
+            Toast.success('Arquivo VCF exportado com sucesso!');
         });
 
         document.getElementById('btn-export-csv')?.addEventListener('click', () => {
             ImportacaoService.exportarCSV(clientes);
             document.getElementById(modalId)?.remove();
-            Modal.alert('Arquivo CSV exportado com sucesso!', 'Sucesso');
+            Toast.success('Arquivo CSV exportado com sucesso!');
         });
     }
 

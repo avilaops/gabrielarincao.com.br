@@ -1,6 +1,7 @@
 // Página de agenda/calendário
 import { Header } from '../components/header.js';
 import { Modal } from '../components/modal.js';
+import { Toast } from '../components/toast.js';
 import { AgendaService } from '../services/agenda.js';
 import { ClienteService } from '../services/clientes.js';
 import { LembretesService } from '../services/lembretes.js';
@@ -446,10 +447,10 @@ export class AgendaPage {
             try {
                 if (isEdit) {
                     AgendaService.update(agendamentoId, data);
-                    Modal.alert('Agendamento atualizado com sucesso!');
+                    Toast.success('Agendamento atualizado com sucesso!');
                 } else {
                     AgendaService.create(data);
-                    Modal.alert('Agendamento criado com sucesso!');
+                    Toast.success('Agendamento criado com sucesso!');
                 }
 
                 modal.close();
@@ -463,20 +464,20 @@ export class AgendaPage {
 
     confirmarAgendamento(id) {
         AgendaService.confirmar(id);
-        Modal.alert('Agendamento confirmado!');
+        Toast.success('Agendamento confirmado!');
         this.renderView();
     }
 
     concluirAgendamento(id) {
         AgendaService.concluir(id);
-        Modal.alert('Agendamento concluído! Adicionado ao histórico do cliente.');
+        Toast.success('Agendamento concluído! Adicionado ao histórico do cliente.');
         this.renderView();
     }
 
     cancelarAgendamento(id) {
         Modal.confirm('Tem certeza que deseja cancelar este agendamento?', () => {
             AgendaService.cancelar(id);
-            Modal.alert('Agendamento cancelado.');
+            Toast.success('Agendamento cancelado.');
             this.renderView();
         });
     }

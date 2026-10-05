@@ -70,9 +70,8 @@ export class ClienteService {
         const mesAtual = hoje.getMonth();
         
         return this.getAll().filter(cliente => {
-            if (!cliente.dataNascimento) return false;
-            const dataNasc = new Date(cliente.dataNascimento);
-            return dataNasc.getMonth() === mesAtual;
+            const dataNasc = Utils.parseDataLocal(cliente.dataNascimento);
+            return dataNasc !== null && dataNasc.getMonth() === mesAtual;
         });
     }
 

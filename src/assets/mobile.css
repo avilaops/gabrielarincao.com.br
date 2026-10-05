@@ -172,6 +172,18 @@
     .bottom-nav {
         display: block;
     }
+
+    /* Toasts acima da barra inferior, na largura da tela */
+    #toast-container {
+        left: 16px;
+        right: 16px;
+        bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+        align-items: stretch;
+    }
+
+    .toast {
+        min-width: 0;
+    }
     
     /* Container Mobile */
     .container {
@@ -422,6 +434,10 @@
     
     .bottom-nav {
         display: none;
+    }
+
+    #toast-container {
+        bottom: 16px;
     }
     
     .mobile-nav {
