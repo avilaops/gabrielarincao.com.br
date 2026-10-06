@@ -1,0 +1,34 @@
+---
+import { Image } from 'astro:assets';
+import fundo from '../assets/img/estudio-desfocado.avif';
+import logo from '../assets/img/logo-gr.png';
+import { linkWhatsApp } from '../lib/contato';
+import IconeWhatsApp from './IconeWhatsApp.astro';
+---
+<section id="inicio" class="relative isolate overflow-hidden bg-carvao text-marfim">
+  <Image
+    src={fundo}
+    alt=""
+    widths={[640, 832]}
+    sizes="100vw"
+    loading="eager"
+    fetchpriority="high"
+    class="absolute inset-0 -z-10 size-full object-cover opacity-35"
+  />
+  <div class="absolute inset-0 -z-10 bg-gradient-to-b from-carvao/40 via-carvao/60 to-carvao"></div>
+
+  <div class="container-site flex min-h-[78svh] flex-col items-center justify-center py-24 text-center">
+    <Image src={logo} alt="" widths={[120, 240]} sizes="120px" loading="eager" class="mb-8 h-auto w-28 sm:w-32" />
+    <p class="mb-4 text-xs font-medium uppercase tracking-[0.3em] text-ouro">Design de sobrancelhas</p>
+    <h1 class="max-w-3xl text-4xl leading-tight font-bold text-marfim sm:text-6xl">Realce Sua Beleza Natural</h1>
+    <p class="mt-6 max-w-xl text-lg text-marfim/85 sm:text-xl">
+      Design de sobrancelhas com técnica, precisão e elegância
+    </p>
+    <div class="mt-10 flex w-full flex-col items-center justify-center gap-3 sm:flex-row">
+      <a href={linkWhatsApp()} target="_blank" rel="noopener" class="btn-ouro w-full sm:w-auto">
+        <IconeWhatsApp /> Agende pelo WhatsApp
+      </a>
+      <a href="#servicos" class="btn-claro w-full sm:w-auto">Ver serviços</a>
+    </div>
+  </div>
+</section>

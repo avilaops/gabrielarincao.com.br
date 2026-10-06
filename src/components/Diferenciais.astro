@@ -1,0 +1,35 @@
+---
+const itens = [
+  {
+    titulo: 'Técnica Profissional',
+    texto: 'Anos de experiência com as melhores técnicas de design de sobrancelhas',
+    icone: 'M12 3l2.5 5.5L20 9.3l-4 4 1 5.7-5-2.8-5 2.8 1-5.7-4-4 5.5-.8z',
+  },
+  {
+    titulo: 'Resultado Personalizado',
+    texto: 'Cada rosto é único. Criamos o design perfeito para você',
+    icone: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0-5a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0-3a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z',
+  },
+  {
+    titulo: 'Ambiente Premium',
+    texto: 'Espaço exclusivo, aconchegante e pensado para seu conforto',
+    icone: 'M6 3h12l3 6-9 12L3 9zm-3 6h18M9 3l3 18 3-18',
+  },
+];
+---
+<section class="secao bg-white" aria-labelledby="titulo-diferenciais">
+  <div class="container-site">
+    <h2 id="titulo-diferenciais" class="titulo-secao">Por Que Escolher Nosso Estúdio?</h2>
+    <ul class="mt-14 grid gap-6 md:grid-cols-3">
+      {itens.map((i) => (
+        <li class="rounded-2xl border border-taupe/50 bg-marfim/40 p-8 text-center">
+          <svg class="mx-auto size-10 text-ouro" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true">
+            <path d={i.icone} />
+          </svg>
+          <h3 class="mt-5 text-xl font-semibold">{i.titulo}</h3>
+          <p class="mt-3">{i.texto}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

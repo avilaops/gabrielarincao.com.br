@@ -1,0 +1,76 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+@import '@fontsource/playfair-display/500.css';
+@import '@fontsource/playfair-display/600.css';
+@import '@fontsource/playfair-display/700.css';
+
+/* Paleta e tipografia de docs/marca/IDENTIDADE_VISUAL.md. O dourado (#D4AF37)
+   só aparece como texto sobre fundo escuro: sobre marfim o contraste não passa
+   no WCAG AA. Sobre fundo claro, texto em café e dourado só em detalhe. */
+@theme {
+  --color-ouro: #d4af37;
+  --color-champanhe: #e3c9a8;
+  --color-marfim: #f5f2ed;
+  --color-taupe: #c4b5a0;
+  --color-cafe: #3d3228;
+  --color-cafe-medio: #6b5d52;
+  --color-carvao: #2c2520;
+  --color-rose: #b76e79;
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter Variable', system-ui, sans-serif;
+
+  --shadow-suave: 0 2px 8px rgb(61 50 40 / 0.08);
+  --shadow-media: 0 8px 24px rgb(61 50 40 / 0.14);
+}
+
+@layer base {
+  html {
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+  body {
+    @apply bg-marfim font-sans text-cafe-medio antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display text-cafe;
+    text-wrap: balance;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ouro;
+  }
+}
+
+/* Utilitários próprios: em Tailwind v4 só @utility pode ser usado em @apply. */
+@utility container-site {
+  @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
+}
+@utility secao {
+  @apply py-20 sm:py-24;
+}
+@utility titulo-secao {
+  @apply text-center text-3xl font-semibold sm:text-4xl;
+  &::after {
+    content: '';
+    @apply mx-auto mt-4 block h-0.5 w-12 bg-ouro;
+  }
+}
+@utility btn {
+  @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-7 py-3 text-base font-semibold transition;
+}
+@utility btn-ouro {
+  @apply btn bg-ouro text-carvao hover:bg-champanhe;
+}
+@utility btn-claro {
+  @apply btn border border-marfim/70 text-marfim hover:bg-marfim hover:text-carvao;
+}
+@utility btn-escuro {
+  @apply btn bg-carvao text-marfim hover:bg-cafe;
+}
