@@ -4,7 +4,7 @@ import { Header } from '../components/header.js';
 export class LandingPage {
     async render() {
         return `
-            ${Header.render(true)}
+            ${Header.render()}
             
             <!-- Hero Section -->
             <section style="
@@ -308,14 +308,6 @@ export class LandingPage {
                            onmouseover="this.style.color='rgba(255,255,255,1)'" 
                            onmouseout="this.style.color='rgba(255,255,255,0.7)'">
                             Desenvolvido por Avila.inc
-                        </a>
-                        <span style="opacity: 0.5;">•</span>
-                        <a href="#/login" 
-                           data-link 
-                           style="color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s;"
-                           onmouseover="this.style.color='rgba(255,255,255,1)'" 
-                           onmouseout="this.style.color='rgba(255,255,255,0.7)'">
-                            Área Administrativa
                         </a>
                     </div>
                 </div>

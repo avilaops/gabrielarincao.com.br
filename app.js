@@ -1,17 +1,11 @@
-// Bootstrap da aplicação
-import { Router } from './src/services/router.js';
-import { StorageService } from './src/services/storage.js';
+// Monta a landing. O CRM e o roteador saíram; o site tem uma página só.
+import { LandingPage } from './src/pages/landing.js';
+import { Header } from './src/components/header.js';
 
-// Inicializar serviços
-StorageService.init();
-
-// Inicializar router
-const router = new Router();
-
-// Iniciar aplicação
-document.addEventListener('DOMContentLoaded', () => {
-    router.init();
+document.addEventListener('DOMContentLoaded', async () => {
+    const page = new LandingPage();
+    document.getElementById('app').innerHTML =
+        `<main id="main-content" role="main">${await page.render()}</main>`;
+    Header.initMobileMenu();
+    page.init();
 });
-
-// Tornar router global para navegação
-window.navigateTo = (path) => router.navigate(path);
