@@ -18,6 +18,9 @@ export default defineConfig({
   ],
   webServer: {
     command: 'npx astro preview --port 4321',
+    // O Astro 7 manda o preview para segundo plano quando detecta um agente de IA,
+    // e o Playwright entende isso como servidor que caiu. Primeiro plano sempre.
+    env: { ASTRO_PREVIEW_BACKGROUND: '0' },
     url: 'http://localhost:4321',
     reuseExistingServer: !process.env.CI,
   },
