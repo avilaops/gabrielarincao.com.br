@@ -74,3 +74,20 @@ test('envio de lembrete para cliente sem telefone falha sem marcar o agendamento
     assert.throws(() => LembretesService.enviarLembrete(AGENDAMENTO, CLIENTES[2]), /sem telefone/);
     assert.equal(StorageService.get(KEYS.AGENDAMENTOS)[0].lembreteEnviado, undefined);
 });
+
+test('link do WhatsApp recusa telefone sem nenhum dígito', () => {
+    for (const telefone of ['   ', 'abc', '() -', '+']) {
+        assert.throws(
+            () => LembretesService.gerarLinkWhatsApp(telefone, 'Oi'),
+            { message: 'Cliente sem telefone cadastrado' },
+            `telefone ${JSON.stringify(telefone)}`
+        );
+    }
+});
+
+test('envio de lembrete para telefone sem dígito falha sem marcar o agendamento', () => {
+    const cliente = { id: 'c4', nome: 'Duda Telefone Errado', telefone: '   ' };
+
+    assert.throws(() => LembretesService.enviarLembrete(AGENDAMENTO, cliente), /sem telefone/);
+    assert.equal(StorageService.get(KEYS.AGENDAMENTOS)[0].lembreteEnviado, undefined);
+});

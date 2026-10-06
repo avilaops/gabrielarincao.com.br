@@ -573,7 +573,14 @@ export class AgendaPage {
         const agendamento = AgendaService.getById(agendamentoId);
         const cliente = ClienteService.getById(clienteId);
         
-        const link = LembretesService.enviarLembrete(agendamento, cliente, templateId);
+        let link;
+        try {
+            link = LembretesService.enviarLembrete(agendamento, cliente, templateId);
+        } catch (error) {
+            // Sem link não há o que abrir; o modal de lembretes fica como está
+            Modal.alert(Utils.sanitizeHTML(error.message), 'Erro');
+            return;
+        }
         window.open(link, '_blank');
         
         // Atualizar visualização

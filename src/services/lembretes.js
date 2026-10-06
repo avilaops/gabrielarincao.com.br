@@ -161,6 +161,10 @@ Gabriela Rincão`
         }
         // Backup editado à mão pode trazer o telefone como número
         const telefoneFormatado = String(telefone).replace(/\D/g, '');
+        // Só espaços ou letras: sem dígito não há número para abrir
+        if (!telefoneFormatado) {
+            throw new Error('Cliente sem telefone cadastrado');
+        }
         const mensagemEncoded = encodeURIComponent(mensagem);
         return `https://wa.me/55${telefoneFormatado}?text=${mensagemEncoded}`;
     }
