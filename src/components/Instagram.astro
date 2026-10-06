@@ -1,0 +1,14 @@
+---
+import { site } from '../data/site';
+import { linkInstagram } from '../lib/contato';
+import IconeInstagram from './IconeInstagram.astro';
+---
+<section id="instagram" class="secao bg-white text-center" aria-labelledby="titulo-instagram">
+  <div class="container-site">
+    <h2 id="titulo-instagram" class="titulo-secao">Acompanhe no Instagram</h2>
+    <p class="mx-auto mt-6 max-w-md">Trabalhos recentes, antes e depois e novidades do estúdio.</p>
+    <a href={linkInstagram} target="_blank" rel="noopener" class="btn-escuro mt-8">
+      <IconeInstagram /> Seguir @{site.instagram}
+    </a>
+  </div>
+</section>

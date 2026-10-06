@@ -1,0 +1,130 @@
+---
+import '../styles/global.css';
+import { getCollection } from 'astro:content';
+import { site } from '../data/site';
+import { linkInstagram, valorDoPreco } from '../lib/contato';
+
+const canonical = new URL(Astro.url.pathname, site.url).href;
+const imagemOg = new URL('/og-default.png', site.url).href;
+
+const servicos = (await getCollection('servicos')).sort((a, b) => a.data.ordem - b.data.ordem);
+
+// Dados estruturados para a busca local do Google. Endereço e horário ficam de
+// fora até a Gabriela confirmar: dado errado aqui é pior que dado nenhum.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BeautySalon',
+  name: site.nome,
+  description: site.descricao,
+  url: site.url,
+  image: imagemOg,
+  telephone: `+${site.whatsapp}`,
+  email: site.email,
+  sameAs: [linkInstagram],
+  priceRange: 'R$ 40 - R$ 450',
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Serviços',
+    itemListElement: servicos.map(({ data: s }) => ({
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Service', name: s.titulo, description: s.descricao },
+      price: valorDoPreco(s.preco),
+      priceCurrency: 'BRL',
+    })),
+  },
+};
+---
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Google Tag Manager. O GA4 (G-KVPEVRMX47) sai pelo container, não por
+         gtag.js direto: o G-QWKQ5114PJ antigo apontava para uma propriedade
+         fora da conta GA4 administrada pela Avila Ops. -->
+    <script is:inline define:vars={{ gtm: site.gtm }}>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', gtm);
+    </script>
+
+    <!-- generate_lead: todo clique que leva a pessoa para um canal de
+         atendimento. O agendamento acontece no WhatsApp, fora de qualquer
+         medição — o clique de saída é o último sinal observável, e é ele que
+         faz o papel de conversão no GA4. Fica delegado no document para pegar
+         qualquer link, inclusive os que forem adicionados depois. -->
+    <script is:inline>
+      (function () {
+        function canal(href) {
+          if (/wa\.me|whatsapp\.com/i.test(href)) return 'whatsapp';
+          if (/^tel:/i.test(href)) return 'telefone';
+          if (/^mailto:/i.test(href)) return 'email';
+          if (/instagram\.com/i.test(href)) return 'instagram';
+          if (/google\.[^/]+\/maps|maps\.app\.goo\.gl/i.test(href)) return 'maps';
+          return null;
+        }
+
+        document.addEventListener('click', function (evento) {
+          var alvo = evento.target;
+          if (!alvo || !alvo.closest) return;
+
+          var link = alvo.closest('a');
+          if (!link || !link.href) return;
+
+          var origem = canal(link.href);
+          if (!origem) return;
+
+          var texto = (link.textContent || link.getAttribute('aria-label') || '').trim().replace(/\s+/g, ' ');
+
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({
+            event: 'generate_lead',
+            lead_source: origem,
+            lead_subject: texto ? texto.slice(0, 80) : window.location.pathname,
+            link_url: link.href,
+            page_path: window.location.pathname
+          });
+        });
+      })();
+    </script>
+
+    <title>{site.titulo}</title>
+    <meta name="description" content={site.descricao} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#2C2520" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={site.titulo} />
+    <meta property="og:description" content={site.descricao} />
+    <meta property="og:image" content={imagemOg} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={site.titulo} />
+    <meta name="twitter:description" content={site.descricao} />
+    <meta name="twitter:image" content={imagemOg} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="Gabi" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${site.gtm}`} height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
+    <a href="#conteudo" class="sr-only z-50 rounded-full bg-ouro px-4 py-2 text-carvao focus:not-sr-only focus:fixed focus:top-3 focus:left-3">Pular para o conteúdo</a>
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,22 @@
+---
+const passos = [
+  { titulo: 'Agendamento', texto: 'Entre em contato pelo WhatsApp e escolha seu horário' },
+  { titulo: 'Análise', texto: 'Estudamos seu rosto e desenhamos o design ideal' },
+  { titulo: 'Execução', texto: 'Realizamos o procedimento com técnica e cuidado' },
+  { titulo: 'Resultado', texto: 'Você sai linda e confiante para arrasar!' },
+];
+---
+<section id="como-funciona" class="secao bg-white" aria-labelledby="titulo-como-funciona">
+  <div class="container-site">
+    <h2 id="titulo-como-funciona" class="titulo-secao">Como Funciona</h2>
+    <ol class="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+      {passos.map((p, i) => (
+        <li class="text-center">
+          <span class="mx-auto flex size-14 items-center justify-center rounded-full border border-ouro font-display text-2xl text-cafe" aria-hidden="true">{i + 1}</span>
+          <h3 class="mt-5 text-xl font-semibold"><span class="sr-only">Passo {i + 1}: </span>{p.titulo}</h3>
+          <p class="mt-2">{p.texto}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

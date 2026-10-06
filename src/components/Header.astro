@@ -1,0 +1,74 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/img/logo-gr.png';
+import { linkWhatsApp } from '../lib/contato';
+import IconeWhatsApp from './IconeWhatsApp.astro';
+
+const links = [
+  { href: '#servicos', texto: 'Serviços' },
+  { href: '#como-funciona', texto: 'Como funciona' },
+  { href: '#depoimentos', texto: 'Depoimentos' },
+  { href: '#contato', texto: 'Contato' },
+];
+---
+<header class="sticky top-0 z-40 border-b border-marfim/10 bg-carvao/95 text-marfim backdrop-blur">
+  <div class="container-site flex h-16 items-center justify-between gap-4">
+    <a href="#inicio" class="flex items-center gap-3" aria-label="Gabriela Rincão — início">
+      <Image src={logo} alt="" width={44} densities={[1, 2]} class="h-auto w-11" loading="eager" />
+      <span class="font-display text-lg text-marfim">Gabriela Rincão</span>
+    </a>
+
+    <nav aria-label="Principal" class="hidden items-center gap-8 md:flex">
+      {links.map((l) => <a href={l.href} class="text-sm text-marfim/85 transition hover:text-ouro">{l.texto}</a>)}
+      <a href={linkWhatsApp()} target="_blank" rel="noopener" class="btn-ouro min-h-10 px-5 py-2 text-sm">
+        <IconeWhatsApp class="size-4" /> Agendar
+      </a>
+    </nav>
+
+    <button
+      type="button"
+      class="flex size-11 items-center justify-center rounded-full md:hidden"
+      aria-controls="menu-mobile"
+      aria-expanded="false"
+      aria-label="Abrir menu"
+      data-menu-botao
+    >
+      <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+        <path d="M4 7h16M4 12h16M4 17h16" />
+      </svg>
+    </button>
+  </div>
+
+  <nav id="menu-mobile" aria-label="Principal" class="border-t border-marfim/10 md:hidden" hidden>
+    <ul class="container-site flex flex-col py-2">
+      {links.map((l) => <li><a href={l.href} class="block py-3 text-marfim">{l.texto}</a></li>)}
+      <li class="py-3">
+        <a href={linkWhatsApp()} target="_blank" rel="noopener" class="btn-ouro w-full">
+          <IconeWhatsApp /> Agendar pelo WhatsApp
+        </a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const botao = document.querySelector<HTMLButtonElement>('[data-menu-botao]');
+  const menu = document.getElementById('menu-mobile');
+  if (botao && menu) {
+    const definir = (aberto: boolean) => {
+      botao.setAttribute('aria-expanded', String(aberto));
+      botao.setAttribute('aria-label', aberto ? 'Fechar menu' : 'Abrir menu');
+      menu.hidden = !aberto;
+    };
+    botao.addEventListener('click', () => definir(botao.getAttribute('aria-expanded') !== 'true'));
+    menu.addEventListener('click', (e) => {
+      if ((e.target as Element).closest('a')) definir(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && botao.getAttribute('aria-expanded') === 'true') {
+        definir(false);
+        botao.focus();
+      }
+    });
+  }
+</script>

@@ -1,0 +1,13 @@
+---
+import { linkWhatsApp } from '../lib/contato';
+import IconeWhatsApp from './IconeWhatsApp.astro';
+---
+<section class="secao bg-gradient-to-br from-ouro to-champanhe text-center text-carvao" aria-labelledby="titulo-chamada">
+  <div class="container-site">
+    <h2 id="titulo-chamada" class="text-3xl font-semibold text-carvao sm:text-4xl">Pronta Para Transformar Seu Olhar?</h2>
+    <p class="mx-auto mt-4 max-w-xl text-lg text-cafe">Agende agora mesmo e descubra o poder de sobrancelhas perfeitas</p>
+    <a href={linkWhatsApp()} target="_blank" rel="noopener" class="btn-escuro mt-10">
+      <IconeWhatsApp /> Agendar agora pelo WhatsApp
+    </a>
+  </div>
+</section>

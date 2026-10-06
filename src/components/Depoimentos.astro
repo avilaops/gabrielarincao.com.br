@@ -1,0 +1,19 @@
+---
+import { depoimentos } from '../data/depoimentos';
+---
+<section id="depoimentos" class="secao" aria-labelledby="titulo-depoimentos">
+  <div class="container-site">
+    <h2 id="titulo-depoimentos" class="titulo-secao">O Que Nossas Clientes Dizem</h2>
+    <ul class="mt-14 grid gap-6 md:grid-cols-3">
+      {depoimentos.map((d) => (
+        <li>
+          <figure class="flex h-full flex-col rounded-2xl bg-white p-8 shadow-suave">
+            <p class="text-xl tracking-widest text-ouro" aria-label="5 de 5 estrelas">★★★★★</p>
+            <blockquote class="mt-4 flex-1 italic">“{d.texto}”</blockquote>
+            <figcaption class="mt-6 font-semibold text-cafe">{d.nome}</figcaption>
+          </figure>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

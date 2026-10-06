@@ -1,19 +1,31 @@
 {
-  "name": "gabriela-rincao-site",
-  "version": "1.0.0",
-  "description": "Site institucional da Gabriela Rincão - Estúdio de Design de Sobrancelhas",
-  "main": "app.js",
+  "name": "gabrielarincao-site",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Site da Gabriela Rincão - Estúdio de Design de Sobrancelhas",
   "type": "module",
   "scripts": {
-    "dev": "http-server . -p 8080 -c-1",
-    "start": "http-server . -p 8080",
-    "test": "node --test"
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "test": "vitest run",
+    "test:e2e": "playwright test"
   },
-  "dependencies": {},
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource/playfair-display": "^5.3.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.3.5",
+    "tailwindcss": "^4.3.3"
+  },
   "devDependencies": {
-    "http-server": "^14.1.1"
-  },
-  "keywords": ["sobrancelhas", "design", "beleza"],
-  "author": "Gabriela Rincão",
-  "license": "ISC"
+    "@astrojs/check": "^0.9.10",
+    "@playwright/test": "^1.63.0",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.3"
+  }
 }
