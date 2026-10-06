@@ -505,11 +505,10 @@ export class AgendaPage {
         const modalId = 'modal-lembretes-' + Date.now();
         const modal = new Modal({
             id: modalId,
-            title: `🔔 Enviar Lembretes (${agendamentos.length} pendente${agendamentos.length === 1 ? '' : 's'})`,
+            title: `🔔 ${LembretesService.tituloModal(agendamentos.length, enviados.length)}`,
             size: 'lg',
             content: `
                 <div style="margin-bottom: 24px;">
-                    <p style="margin-bottom: 16px;">Clientes com agendamento para amanhã:</p>
                     <div id="lembretes-list"></div>
                 </div>
                 <div class="modal-footer">
@@ -526,7 +525,7 @@ export class AgendaPage {
         // Renderizar lista de lembretes
         const list = document.getElementById('lembretes-list');
         if (list) {
-            list.innerHTML = [...agendamentos, ...enviados].map(ag => `
+            const cartao = ag => `
                 <div class="card mb-sm" style="padding: 16px;">
                     <div class="flex flex-between" style="align-items: start;">
                         <div style="flex: 1;">
@@ -555,7 +554,15 @@ export class AgendaPage {
                         </button>
                     </div>
                 </div>
-            `).join('');
+            `;
+            // Pendentes e já enviados em grupos separados; grupo vazio não aparece
+            const grupo = (subtitulo, lista) => lista.length === 0 ? '' : `
+                <p style="margin: 0 0 12px; font-weight: 600;">${subtitulo}</p>
+                <div style="margin-bottom: 16px;">${lista.map(cartao).join('')}</div>
+            `;
+            list.innerHTML =
+                grupo(`Pendentes para amanhã (${agendamentos.length})`, agendamentos) +
+                grupo(`Já enviados — reenviar se o WhatsApp não abriu (${enviados.length})`, enviados);
 
             // O id vai por atributo de dados, nunca dentro de código inline
             list.querySelectorAll('[data-lembrete-enviar]').forEach(btn => {

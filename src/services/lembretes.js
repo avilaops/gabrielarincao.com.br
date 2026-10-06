@@ -139,6 +139,15 @@ Gabriela Rincão`
         return this.getAgendamentosDeAmanha(true);
     }
 
+    // Título do modal de lembretes, coerente com o que há na lista (só pendentes, só reenvios ou os dois)
+    static tituloModal(pendentes, enviados) {
+        const textoPendentes = `${pendentes} pendente${pendentes === 1 ? '' : 's'}`;
+        const textoEnviados = `${enviados} já enviado${enviados === 1 ? '' : 's'}`;
+        if (pendentes === 0 && enviados > 0) return `Reenviar Lembretes (${textoEnviados})`;
+        if (enviados === 0) return `Enviar Lembretes (${textoPendentes})`;
+        return `Enviar Lembretes (${textoPendentes}, ${textoEnviados})`;
+    }
+
     // Formatar mensagem com dados do agendamento
     static formatarMensagem(template, agendamento, cliente) {
         const data = new Date(agendamento.dataHora);
@@ -189,11 +198,17 @@ Gabriela Rincão`
         const mensagem = this.formatarMensagem(template.texto, agendamento, cliente);
         const link = this.gerarLinkWhatsApp(cliente.telefone, mensagem);
         
-        // Marcar que lembrete foi enviado
+        // Marcar que lembrete foi enviado. O reenvio vai para campo à parte: `dataLembrete`
+        // segue sendo o horário do primeiro envio (vale o que está gravado, não a cópia da tela)
+        const gravado = AgendaService.getById(agendamento.id) || agendamento;
+        const agora = new Date().toISOString();
+        const marcacao = gravado.lembreteEnviado === true
+            ? { dataReenvioLembrete: agora }
+            : { dataLembrete: agora };
         AgendaService.update(agendamento.id, {
             ...agendamento,
             lembreteEnviado: true,
-            dataLembrete: new Date().toISOString()
+            ...marcacao
         });
 
         return link;

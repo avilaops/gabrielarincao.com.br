@@ -267,6 +267,64 @@ test('lembrete enviado continua disponível para reenvio, fora da lista de pende
     assert.deepEqual(ids(LembretesService.getAgendamentosParaLembrete()), ['dois']);
 });
 
+test('reenvio preserva o horário do primeiro envio e guarda o do reenvio à parte', () => {
+    // Relógio fixo antes de montar os dados: "amanhã" tem de ser o do relógio do teste
+    mock.timers.enable({ apis: ['Date'], now: new Date('2026-10-05T13:00:00.000Z') });
+    const gravado = id => StorageService.get(KEYS.AGENDAMENTOS).find(ag => ag.id === id);
+    try {
+        clientes([{ nome: 'Ana' }]);
+        const amanha = new Date();
+        amanha.setDate(amanha.getDate() + 1);
+        amanha.setHours(12, 0, 0, 0);
+        agendamentos([
+            { id: 'um', dataHora: amanha.toISOString() },
+            // Gravados antes desta mudança: com e sem o horário do primeiro envio
+            { id: 'antigo', dataHora: amanha.toISOString(), lembreteEnviado: true, dataLembrete: '2026-10-01T12:00:00.000Z' },
+            { id: 'sem-data', dataHora: amanha.toISOString(), lembreteEnviado: true }
+        ]);
+
+        // Primeiro envio: só `dataLembrete`
+        const [copiaDaTela] = LembretesService.getAgendamentosParaLembrete();
+        LembretesService.enviarLembrete(copiaDaTela, copiaDaTela.cliente);
+        assert.equal(gravado('um').dataLembrete, '2026-10-05T13:00:00.000Z');
+        assert.equal('dataReenvioLembrete' in gravado('um'), false);
+
+        // Reenvio, mesmo com a cópia antiga da tela (ainda sem marcação): o primeiro horário fica
+        mock.timers.setTime(new Date('2026-10-05T15:30:00.000Z').getTime());
+        LembretesService.enviarLembrete(copiaDaTela, copiaDaTela.cliente);
+        assert.equal(gravado('um').dataLembrete, '2026-10-05T13:00:00.000Z');
+        assert.equal(gravado('um').dataReenvioLembrete, '2026-10-05T15:30:00.000Z');
+
+        // Segundo reenvio: o campo à parte fica com o mais recente
+        mock.timers.setTime(new Date('2026-10-05T18:00:00.000Z').getTime());
+        LembretesService.enviarLembrete(AgendaService.getById('um'), ClienteService.getById('c1'));
+        assert.equal(gravado('um').dataLembrete, '2026-10-05T13:00:00.000Z');
+        assert.equal(gravado('um').dataReenvioLembrete, '2026-10-05T18:00:00.000Z');
+
+        // Registro antigo: o horário já gravado é o do primeiro envio e continua lá
+        LembretesService.enviarLembrete(AgendaService.getById('antigo'), ClienteService.getById('c1'));
+        assert.equal(gravado('antigo').dataLembrete, '2026-10-01T12:00:00.000Z');
+        assert.equal(gravado('antigo').dataReenvioLembrete, '2026-10-05T18:00:00.000Z');
+
+        // Registro antigo sem horário: o primeiro envio é desconhecido e não é inventado
+        LembretesService.enviarLembrete(AgendaService.getById('sem-data'), ClienteService.getById('c1'));
+        assert.equal('dataLembrete' in gravado('sem-data'), false);
+        assert.equal(gravado('sem-data').dataReenvioLembrete, '2026-10-05T18:00:00.000Z');
+        assert.equal(gravado('sem-data').lembreteEnviado, true);
+    } finally {
+        mock.timers.reset();
+    }
+});
+
+test('título do modal de lembretes acompanha o que há na lista', () => {
+    assert.equal(LembretesService.tituloModal(1, 0), 'Enviar Lembretes (1 pendente)');
+    assert.equal(LembretesService.tituloModal(3, 0), 'Enviar Lembretes (3 pendentes)');
+    assert.equal(LembretesService.tituloModal(2, 1), 'Enviar Lembretes (2 pendentes, 1 já enviado)');
+    // Só reenvios: nada de "0 pendentes"
+    assert.equal(LembretesService.tituloModal(0, 1), 'Reenviar Lembretes (1 já enviado)');
+    assert.equal(LembretesService.tituloModal(0, 4), 'Reenviar Lembretes (4 já enviados)');
+});
+
 test('AgendaService.getPorData com texto AAAA-MM-DD usa o dia local, não o UTC', () => {
     clientes([{ nome: 'Ana' }]);
     agendamentos([
