@@ -65,10 +65,13 @@ export class AgendaService {
     }
 
     static getPorData(data) {
-        const dataStr = new Date(data).toISOString().split('T')[0];
+        // Dia local: em UTC, um horário depois das 21h já cai no dia seguinte
+        const dia = new Date(data);
         return this.getAll().filter(agendamento => {
-            const agendDataStr = new Date(agendamento.dataHora).toISOString().split('T')[0];
-            return agendDataStr === dataStr;
+            const agendData = new Date(agendamento.dataHora);
+            return agendData.getFullYear() === dia.getFullYear()
+                && agendData.getMonth() === dia.getMonth()
+                && agendData.getDate() === dia.getDate();
         });
     }
 

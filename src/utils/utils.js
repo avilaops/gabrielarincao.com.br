@@ -2,13 +2,16 @@
 export class Utils {
     /**
      * Sanitiza string para prevenir XSS
-     * Remove tags HTML e caracteres especiais perigosos
+     * Escapa os caracteres especiais de HTML, inclusive aspas (uso em atributos)
      */
     static sanitizeHTML(str) {
-        if (!str) return '';
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
+        if (str === null || str === undefined) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
     }
 
     /**
@@ -26,11 +29,30 @@ export class Utils {
      */
     static formatPhone(phone) {
         if (!phone) return '-';
-        const cleaned = phone.replace(/\D/g, '');
+        // Backup editado à mão pode trazer o telefone como número
+        const text = String(phone);
+        const cleaned = text.replace(/\D/g, '');
         if (cleaned.length === 11) {
             return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7)}`;
         }
-        return phone;
+        return text;
+    }
+
+    /**
+     * Converte AAAA-MM-DD (ou ISO completo) em Date à meia-noite local.
+     * `new Date('1990-05-01')` lê como UTC e, no Brasil, volta um dia.
+     */
+    static parseDataLocal(str) {
+        if (!str) return null;
+        const partes = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(str).slice(0, 10));
+        if (!partes) return null;
+        const [ano, mes, dia] = partes.slice(1).map(Number);
+        const data = new Date(ano, mes - 1, dia);
+        // 2023-02-31 viraria 3 de março: data que não existe é inválida
+        if (data.getFullYear() !== ano || data.getMonth() !== mes - 1 || data.getDate() !== dia) {
+            return null;
+        }
+        return data;
     }
 
     /**

@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "description": "Site institucional da Gabriela Rincão - Estúdio de Design de Sobrancelhas",
   "main": "app.js",
+  "type": "module",
   "scripts": {
     "dev": "http-server . -p 8080 -c-1",
-    "start": "http-server . -p 8080"
+    "start": "http-server . -p 8080",
+    "test": "node --test"
   },
   "dependencies": {},
   "devDependencies": {

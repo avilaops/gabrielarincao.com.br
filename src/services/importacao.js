@@ -2,6 +2,16 @@
 import { ClienteService } from './clientes.js';
 
 export class ImportacaoService {
+    // Escolhe o importador pela extensão do nome do arquivo
+    static importarArquivo(file) {
+        const nome = String(file?.name || '').toLowerCase();
+
+        if (nome.endsWith('.vcf')) return this.importarVCF(file);
+        if (nome.endsWith('.csv')) return this.importarCSV(file);
+
+        return Promise.reject(new Error('Formato não suportado. Use VCF ou CSV.'));
+    }
+
     // Importar arquivo VCF (vCard)
     static async importarVCF(file) {
         return new Promise((resolve, reject) => {

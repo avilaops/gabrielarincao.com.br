@@ -52,18 +52,31 @@ export class Modal {
         }, 100);
         
         // ESC para fechar
-        const escListener = (e) => {
+        this.escListener = (e) => {
             if (e.key === 'Escape') {
                 this.close();
-                document.removeEventListener('keydown', escListener);
+                this.removeEscListener();
             }
         };
-        document.addEventListener('keydown', escListener);
+        document.addEventListener('keydown', this.escListener);
         
         // Animação
         requestAnimationFrame(() => {
             modalElement.classList.add('fade-in');
         });
+    }
+
+    removeEscListener() {
+        if (this.escListener) {
+            document.removeEventListener('keydown', this.escListener);
+            this.escListener = null;
+        }
+    }
+
+    // Tira o modal da tela na hora, sem animação e sem chamar onClose
+    remove() {
+        document.getElementById(this.id)?.remove();
+        this.removeEscListener();
     }
 
     close() {

@@ -199,7 +199,7 @@ export class FinanceiroPage {
             <div class="grid grid-3">
                 ${formas.map(forma => `
                     <div class="card">
-                        <h4 style="text-transform: capitalize;">${forma.nome}</h4>
+                        <h4 style="text-transform: capitalize;">${Utils.sanitizeHTML(forma.nome)}</h4>
                         <p class="text-primary" style="font-size: 1.5rem; font-weight: 700;">
                             ${Utils.formatCurrency(forma.valor)}
                         </p>
@@ -248,9 +248,9 @@ export class FinanceiroPage {
                                     hour: '2-digit',
                                     minute: '2-digit'
                                 })}</td>
-                                <td>${p.servico}</td>
+                                <td>${Utils.sanitizeHTML(p.servico)}</td>
                                 <td><strong>${Utils.formatCurrency(p.valor)}</strong></td>
-                                <td style="text-transform: capitalize;">${p.formaPagamento}</td>
+                                <td style="text-transform: capitalize;">${Utils.sanitizeHTML(p.formaPagamento)}</td>
                             </tr>
                         `).join('')}
                     </tbody>

@@ -114,7 +114,9 @@ Gabriela Rincão`
         const agendamentos = AgendaService.getAll();
         
         return agendamentos.filter(ag => {
-            if (ag.status !== 'pendente' && ag.status !== 'confirmado') return false;
+            if (ag.status !== 'agendado' && ag.status !== 'confirmado') return false;
+            // Quem já recebeu não volta para a lista (mesma conta do card Avisos)
+            if (ag.lembreteEnviado === true) return false;
             
             const dataAgendamento = new Date(ag.dataHora);
             return dataAgendamento >= amanha && dataAgendamento < depoisDeAmanha;
@@ -154,7 +156,15 @@ Gabriela Rincão`
 
     // Gerar link do WhatsApp com mensagem
     static gerarLinkWhatsApp(telefone, mensagem) {
-        const telefoneFormatado = telefone.replace(/\D/g, '');
+        if (telefone === undefined || telefone === null || telefone === '') {
+            throw new Error('Cliente sem telefone cadastrado');
+        }
+        // Backup editado à mão pode trazer o telefone como número
+        const telefoneFormatado = String(telefone).replace(/\D/g, '');
+        // Só espaços ou letras: sem dígito não há número para abrir
+        if (!telefoneFormatado) {
+            throw new Error('Cliente sem telefone cadastrado');
+        }
         const mensagemEncoded = encodeURIComponent(mensagem);
         return `https://wa.me/55${telefoneFormatado}?text=${mensagemEncoded}`;
     }
