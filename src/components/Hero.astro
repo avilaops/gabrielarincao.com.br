@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import fundo from '../assets/img/estudio-desfocado.avif';
-import logo from '../assets/img/logo-gr.png';
+import sobrancelha from '../assets/img/sobrancelha-escovinha.jpg';
 import { linkWhatsApp } from '../lib/contato';
 import IconeWhatsApp from './IconeWhatsApp.astro';
 ---
@@ -12,23 +12,38 @@ import IconeWhatsApp from './IconeWhatsApp.astro';
     widths={[640, 832]}
     sizes="100vw"
     loading="eager"
-    fetchpriority="high"
-    class="absolute inset-0 -z-10 size-full object-cover opacity-35"
+    class="absolute inset-0 -z-10 size-full object-cover opacity-25"
   />
-  <div class="absolute inset-0 -z-10 bg-gradient-to-b from-carvao/40 via-carvao/60 to-carvao"></div>
+  <div class="absolute inset-0 -z-10 bg-gradient-to-br from-carvao/50 via-carvao/80 to-carvao"></div>
 
-  <div class="container-site flex min-h-[78svh] flex-col items-center justify-center py-24 text-center">
-    <Image src={logo} alt="" widths={[120, 240]} sizes="120px" loading="eager" class="mb-8 h-auto w-28 sm:w-32" />
-    <p class="mb-4 text-xs font-medium uppercase tracking-[0.3em] text-ouro">Design de sobrancelhas</p>
-    <h1 class="max-w-3xl text-4xl leading-tight font-bold text-marfim sm:text-6xl">Realce Sua Beleza Natural</h1>
-    <p class="mt-6 max-w-xl text-lg text-marfim/85 sm:text-xl">
-      Design de sobrancelhas com técnica, precisão e elegância
-    </p>
-    <div class="mt-10 flex w-full flex-col items-center justify-center gap-3 sm:flex-row">
-      <a href={linkWhatsApp()} target="_blank" rel="noopener" class="btn-ouro w-full sm:w-auto">
-        <IconeWhatsApp /> Agende pelo WhatsApp
-      </a>
-      <a href="#servicos" class="btn-claro w-full sm:w-auto">Ver serviços</a>
+  <div class="container-site grid items-center gap-12 py-16 sm:py-20 lg:min-h-[86svh] lg:grid-cols-[1.1fr_0.9fr] lg:gap-16 lg:py-24">
+    <div class="text-center lg:text-left">
+      <p class="mb-5 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-ouro sm:text-xs sm:tracking-[0.3em]">Design de sobrancelhas · Brow Lamination · Nanofios</p>
+      <h1 class="text-4xl leading-[1.08] font-bold text-marfim sm:text-6xl">
+        Realce Sua <span class="italic text-champanhe">Beleza Natural</span>
+      </h1>
+      <p class="mx-auto mt-6 max-w-xl text-lg text-marfim/80 sm:text-xl lg:mx-0">
+        Design de sobrancelhas com técnica, precisão e elegância
+      </p>
+      <div class="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
+        <a href={linkWhatsApp()} target="_blank" rel="noopener" class="btn-ouro w-full sm:w-auto">
+          <IconeWhatsApp /> Agende pelo WhatsApp
+        </a>
+        <a href="#servicos" class="btn-claro w-full sm:w-auto">Ver serviços</a>
+      </div>
     </div>
+
+    <figure class="relative mx-auto w-full max-w-[17rem] sm:max-w-sm lg:max-w-md">
+      <div class="absolute -inset-3 rounded-t-full border border-ouro/50" aria-hidden="true"></div>
+      <Image
+        src={sobrancelha}
+        alt="Sobrancelha cheia e bem desenhada sendo penteada com escovinha"
+        widths={[360, 540, 720]}
+        sizes="(min-width: 1024px) 448px, (min-width: 640px) 384px, 272px"
+        loading="eager"
+        fetchpriority="high"
+        class="relative aspect-[4/5] w-full rounded-t-full object-cover object-[60%_center] shadow-media"
+      />
+    </figure>
   </div>
 </section>

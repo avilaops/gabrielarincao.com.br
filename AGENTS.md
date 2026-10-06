@@ -45,6 +45,9 @@ descrito em outro lugar deste repositório:
 - Sem CSS em linha e sem `onclick="…"`; interação vai em `<script>` do componente.
 - JavaScript no cliente só quando CSS não resolve. Hoje só o menu do celular usa.
 - Imagem passa por `<Image>`/`<Picture>` de `astro:assets`, com `alt` (vazio se decorativa).
+- As fotos de `src/assets/img/` que vieram do Adobe Stock são ilustrativas (lista e licença em
+  `docs/marca/CREDITOS-IMAGENS.md`). Nunca as use em galeria, antes e depois ou qualquer lugar
+  que sugira trabalho da Gabriela. Foto real dela tem prioridade.
 - Dourado (`ouro`) como texto só sobre fundo escuro; sobre claro não passa no WCAG AA.
 - Sem dependência nova sem necessidade.
 

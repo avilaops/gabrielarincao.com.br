@@ -1,12 +1,23 @@
 ---
+import { Image } from 'astro:assets';
+import ferramentas from '../assets/img/ferramentas-fundo-cafe.jpg';
 import { linkWhatsApp } from '../lib/contato';
 import IconeWhatsApp from './IconeWhatsApp.astro';
 ---
-<section class="secao bg-gradient-to-br from-ouro to-champanhe text-center text-carvao" aria-labelledby="titulo-chamada">
+<section class="relative isolate overflow-hidden bg-carvao py-24 text-center sm:py-32" aria-labelledby="titulo-chamada">
+  <Image
+    src={ferramentas}
+    alt=""
+    widths={[640, 1125]}
+    sizes="100vw"
+    class="absolute inset-0 -z-10 size-full object-cover object-[center_35%] opacity-75"
+  />
+  <div class="absolute inset-0 -z-10 bg-gradient-to-t from-carvao/95 via-carvao/60 to-carvao/30"></div>
   <div class="container-site">
-    <h2 id="titulo-chamada" class="text-3xl font-semibold text-carvao sm:text-4xl">Pronta Para Transformar Seu Olhar?</h2>
-    <p class="mx-auto mt-4 max-w-xl text-lg text-cafe">Agende agora mesmo e descubra o poder de sobrancelhas perfeitas</p>
-    <a href={linkWhatsApp()} target="_blank" rel="noopener" class="btn-escuro mt-10">
+    <p class="text-xs font-medium uppercase tracking-[0.3em] text-ouro">Agendamento pelo WhatsApp</p>
+    <h2 id="titulo-chamada" class="mt-4 text-3xl font-semibold text-marfim sm:text-5xl">Pronta Para Transformar Seu Olhar?</h2>
+    <p class="mx-auto mt-5 max-w-xl text-lg text-marfim/80">Agende agora mesmo e descubra o poder de sobrancelhas perfeitas</p>
+    <a href={linkWhatsApp()} target="_blank" rel="noopener" class="btn-ouro mt-10">
       <IconeWhatsApp /> Agendar agora pelo WhatsApp
     </a>
   </div>

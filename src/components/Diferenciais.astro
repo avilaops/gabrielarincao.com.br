@@ -1,4 +1,7 @@
 ---
+import { Image } from 'astro:assets';
+import medicao from '../assets/img/medicao-proporcoes.jpg';
+
 const itens = [
   {
     titulo: 'Técnica Profissional',
@@ -18,18 +21,36 @@ const itens = [
 ];
 ---
 <section class="secao bg-white" aria-labelledby="titulo-diferenciais">
-  <div class="container-site">
-    <h2 id="titulo-diferenciais" class="titulo-secao">Por Que Escolher Nosso Estúdio?</h2>
-    <ul class="mt-14 grid gap-6 md:grid-cols-3">
-      {itens.map((i) => (
-        <li class="rounded-2xl border border-taupe/50 bg-marfim/40 p-8 text-center">
-          <svg class="mx-auto size-10 text-ouro" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true">
-            <path d={i.icone} />
-          </svg>
-          <h3 class="mt-5 text-xl font-semibold">{i.titulo}</h3>
-          <p class="mt-3">{i.texto}</p>
-        </li>
-      ))}
-    </ul>
+  <div class="container-site grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+    <div class="relative">
+      <Image
+        src={medicao}
+        alt="Medição das proporções do rosto com compasso antes do desenho da sobrancelha"
+        widths={[480, 720, 960]}
+        sizes="(min-width: 1024px) 50vw, 100vw"
+        class="aspect-[4/3] w-full rounded-2xl object-cover shadow-media lg:aspect-[4/5]"
+      />
+      <div class="absolute -right-3 -bottom-3 -z-10 hidden size-40 rounded-2xl border border-ouro/60 lg:block" aria-hidden="true"></div>
+    </div>
+
+    <div>
+      <p class="text-xs font-medium uppercase tracking-[0.3em] text-cafe-medio">O estúdio</p>
+      <h2 id="titulo-diferenciais" class="mt-3 text-3xl font-semibold sm:text-4xl">Por Que Escolher Nosso Estúdio?</h2>
+      <ul class="mt-10 space-y-8">
+        {itens.map((i) => (
+          <li class="flex gap-5">
+            <span class="flex size-12 shrink-0 items-center justify-center rounded-full bg-marfim">
+              <svg class="size-6 text-ouro" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true">
+                <path d={i.icone} />
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-xl font-semibold">{i.titulo}</h3>
+              <p class="mt-1">{i.texto}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
   </div>
 </section>
