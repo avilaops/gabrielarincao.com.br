@@ -425,18 +425,18 @@ a:focus {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: var(--spacing-md);
+    padding: var(--spacing-6);
 }
 
 .container-fluid {
     width: 100%;
-    padding: var(--spacing-md);
+    padding: var(--spacing-6);
 }
 
 /* ===== GRID ===== */
 .grid {
     display: grid;
-    gap: var(--spacing-md);
+    gap: var(--spacing-6);
 }
 
 .grid-2 { grid-template-columns: repeat(2, 1fr); }
@@ -477,7 +477,7 @@ a:focus {
 }
 
 .table th {
-    padding: var(--spacing-sm);
+    padding: var(--spacing-4);
     text-align: left;
     font-weight: 600;
     color: var(--text-primary);
@@ -487,7 +487,7 @@ a:focus {
 }
 
 .table td {
-    padding: var(--spacing-sm);
+    padding: var(--spacing-4);
     border-top: 1px solid #F0F0F0;
 }
 
@@ -527,7 +527,7 @@ a:focus {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--spacing-md);
+    padding: var(--spacing-6);
     border-bottom: 1px solid #F0F0F0;
 }
 
@@ -556,14 +556,14 @@ a:focus {
 }
 
 .modal-body {
-    padding: var(--spacing-md);
+    padding: var(--spacing-6);
 }
 
 .modal-footer {
     display: flex;
     justify-content: flex-end;
-    gap: var(--spacing-sm);
-    padding: var(--spacing-md);
+    gap: var(--spacing-4);
+    padding: var(--spacing-6);
     border-top: 1px solid #F0F0F0;
 }
 
@@ -602,14 +602,14 @@ a:focus {
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-lg);
+    gap: var(--spacing-6);
+    margin-bottom: var(--spacing-8);
 }
 
 .stat-card {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: white;
-    padding: var(--spacing-md);
+    padding: var(--spacing-6);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-md);
     min-width: 0;
@@ -634,14 +634,14 @@ a:focus {
     background-color: white;
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
-    padding: var(--spacing-md);
+    padding: var(--spacing-6);
 }
 
 .calendar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-6);
 }
 
 .calendar-title {
@@ -651,7 +651,7 @@ a:focus {
 
 .calendar-nav {
     display: flex;
-    gap: var(--spacing-sm);
+    gap: var(--spacing-4);
 }
 
 .calendar-grid {
@@ -701,7 +701,7 @@ a:focus {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: var(--spacing-xl);
+    padding: var(--spacing-12);
 }
 
 .spinner {
@@ -716,13 +716,13 @@ a:focus {
 /* ===== EMPTY STATE ===== */
 .empty-state {
     text-align: center;
-    padding: var(--spacing-xl);
+    padding: var(--spacing-12);
     color: var(--text-secondary);
 }
 
 .empty-state-icon {
     font-size: 4rem;
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-6);
     opacity: 0.5;
 }
 
@@ -733,19 +733,19 @@ a:focus {
 .text-secondary { color: var(--text-secondary); }
 .text-muted { color: var(--text-light); }
 
-.mt-sm { margin-top: var(--spacing-sm); }
-.mt-md { margin-top: var(--spacing-md); }
-.mt-lg { margin-top: var(--spacing-lg); }
-.mb-sm { margin-bottom: var(--spacing-sm); }
-.mb-md { margin-bottom: var(--spacing-md); }
-.mb-lg { margin-bottom: var(--spacing-lg); }
+.mt-sm { margin-top: var(--spacing-4); }
+.mt-md { margin-top: var(--spacing-6); }
+.mt-lg { margin-top: var(--spacing-8); }
+.mb-sm { margin-bottom: var(--spacing-4); }
+.mb-md { margin-bottom: var(--spacing-6); }
+.mb-lg { margin-bottom: var(--spacing-8); }
 
 .flex { display: flex; }
 .flex-column { flex-direction: column; }
 .flex-center { align-items: center; justify-content: center; }
 .flex-between { justify-content: space-between; }
-.gap-sm { gap: var(--spacing-sm); }
-.gap-md { gap: var(--spacing-md); }
+.gap-sm { gap: var(--spacing-4); }
+.gap-md { gap: var(--spacing-6); }
 
 .hidden { display: none; }
 
@@ -776,12 +776,12 @@ a:focus {
     
     .nav {
         flex-direction: column;
-        gap: var(--spacing-sm);
+        gap: var(--spacing-4);
     }
     
     .header-content {
         flex-direction: column;
-        gap: var(--spacing-sm);
+        gap: var(--spacing-4);
     }
     
     .modal {
@@ -803,7 +803,7 @@ a:focus {
 
 @media (max-width: 480px) {
     .container {
-        padding: var(--spacing-sm);
+        padding: var(--spacing-4);
     }
     
     .btn {
