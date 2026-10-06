@@ -443,6 +443,22 @@ a:focus {
 .grid-3 { grid-template-columns: repeat(3, 1fr); }
 .grid-4 { grid-template-columns: repeat(4, 1fr); }
 
+/* Filtros da lista de clientes: a coluna única no celular vem de .grid-4 */
+.filtros-clientes {
+    margin-top: var(--spacing-4);
+    gap: var(--spacing-4);
+    align-items: end;
+}
+
+.filtros-clientes .form-group {
+    margin-bottom: 0;
+    min-width: 0;
+}
+
+.contador-clientes {
+    margin-bottom: var(--spacing-2);
+}
+
 /* ===== TABELA ===== */
 .table-container {
     overflow-x: auto;

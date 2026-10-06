@@ -29,7 +29,7 @@ Sugestões de melhorias futuras para o sistema Gabriela.
   - Alertas de agendamentos próximos
   - Confirmação de ações
 
-- [ ] **Busca Avançada**
+- [x] **Busca Avançada**
   - Filtros múltiplos
   - Ordenação customizada
   - Busca por período

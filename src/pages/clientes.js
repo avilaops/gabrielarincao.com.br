@@ -3,13 +3,32 @@ import { Header } from '../components/header.js';
 import { Modal } from '../components/modal.js';
 import { Toast } from '../components/toast.js';
 import { ClienteService } from '../services/clientes.js';
+import { BuscaService } from '../services/busca.js';
 import { ImportacaoService } from '../services/importacao.js';
 import { Utils } from '../utils/utils.js';
 
 export class ClientesPage {
     constructor() {
         this.clientes = [];
-        this.searchQuery = '';
+        this.totalClientes = 0;
+        this.filtros = ClientesPage.filtrosVazios();
+        this.ordem = 'recentes';
+    }
+
+    static MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+
+    static ORDENS = [
+        ['recentes', 'Mais recentes'],
+        ['nome-az', 'Nome (A–Z)'],
+        ['nome-za', 'Nome (Z–A)'],
+        ['ultimo-atendimento', 'Último atendimento'],
+        ['mais-procedimentos', 'Mais procedimentos'],
+        ['maior-valor', 'Maior valor gasto']
+    ];
+
+    static filtrosVazios() {
+        return { texto: '', mesAniversario: '', atendimento: '', servico: '', periodoDe: '', periodoAte: '' };
     }
 
     async render() {
@@ -38,6 +57,48 @@ export class ClientesPage {
                         placeholder="Pesquisar por nome, telefone ou Instagram..."
                         id="search-input"
                     >
+                    <div class="grid grid-4 filtros-clientes">
+                        <div class="form-group">
+                            <label class="form-label" for="filtro-aniversario">Aniversário</label>
+                            <select class="form-select" id="filtro-aniversario">
+                                <option value="">Qualquer mês</option>
+                                ${ClientesPage.MESES.map((mes, i) => `<option value="${i + 1}">${mes}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="filtro-atendimento">Atendimento</label>
+                            <select class="form-select" id="filtro-atendimento">
+                                <option value="">Todos</option>
+                                <option value="com">Com atendimento</option>
+                                <option value="sem">Sem atendimento</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="filtro-servico">Serviço realizado</label>
+                            <select class="form-select" id="filtro-servico">
+                                <option value="">Qualquer serviço</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="filtro-periodo-de">Atendido de</label>
+                            <input type="date" class="form-input" id="filtro-periodo-de">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="filtro-periodo-ate">até</label>
+                            <input type="date" class="form-input" id="filtro-periodo-ate">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="filtro-ordem">Ordenar por</label>
+                            <select class="form-select" id="filtro-ordem">
+                                ${ClientesPage.ORDENS.map(([valor, rotulo]) => `<option value="${valor}">${rotulo}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-sm btn-outline" id="btn-limpar-filtros">
+                                Limpar filtros
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="clientes-list"></div>
@@ -83,22 +144,95 @@ export class ClientesPage {
         if (searchInput) {
             searchInput.addEventListener('input', (e) => this.handleSearch(e.target.value));
         }
-        
+
+        // Filtros: cada controle grava no estado da página e refaz a lista
+        const filtrosPorControle = {
+            'filtro-aniversario': 'mesAniversario',
+            'filtro-atendimento': 'atendimento',
+            'filtro-servico': 'servico',
+            'filtro-periodo-de': 'periodoDe',
+            'filtro-periodo-ate': 'periodoAte'
+        };
+        Object.entries(filtrosPorControle).forEach(([id, filtro]) => {
+            document.getElementById(id)?.addEventListener('change', (e) => {
+                this.filtros[filtro] = e.target.value;
+                this.loadClientes();
+            });
+        });
+
+        document.getElementById('filtro-ordem')?.addEventListener('change', (e) => {
+            this.ordem = e.target.value;
+            this.loadClientes();
+        });
+
+        document.getElementById('btn-limpar-filtros')?.addEventListener('click', () => this.limparFiltros());
+
         this.loadClientes();
     }
 
     loadClientes() {
-        if (this.searchQuery) {
-            this.clientes = ClienteService.search(this.searchQuery);
-        } else {
-            this.clientes = ClienteService.getAll();
-        }
+        const todos = ClienteService.getAll();
+        this.totalClientes = todos.length;
+        this.renderServicos(todos);
+        this.clientes = BuscaService.ordenarClientes(
+            BuscaService.filtrarClientes(todos, this.filtros),
+            this.ordem
+        );
         this.renderClientes();
+    }
+
+    // Remonta o select de serviços (um atendimento concluído pode trazer serviço novo)
+    // e mantém a opção escolhida enquanto ela existir
+    renderServicos(todos) {
+        const servicos = BuscaService.servicosDoHistorico(todos);
+        const escolhido = BuscaService.normalizar(this.filtros.servico);
+        this.filtros.servico = servicos.find(s => BuscaService.normalizar(s) === escolhido) || '';
+
+        const select = document.getElementById('filtro-servico');
+        if (!select) return;
+
+        select.innerHTML = `
+            <option value="">Qualquer serviço</option>
+            ${servicos.map(s => `<option value="${Utils.sanitizeHTML(s)}">${Utils.sanitizeHTML(s)}</option>`).join('')}
+        `;
+        select.value = this.filtros.servico;
+    }
+
+    limparFiltros() {
+        this.filtros = ClientesPage.filtrosVazios();
+        this.ordem = 'recentes';
+
+        ['search-input', 'filtro-aniversario', 'filtro-atendimento', 'filtro-servico',
+            'filtro-periodo-de', 'filtro-periodo-ate'].forEach(id => {
+            const controle = document.getElementById(id);
+            if (controle) controle.value = '';
+        });
+        const ordem = document.getElementById('filtro-ordem');
+        if (ordem) ordem.value = 'recentes';
+
+        this.loadClientes();
     }
 
     renderClientes() {
         const container = document.getElementById('clientes-list');
         if (!container) return;
+
+        const comFiltro = BuscaService.filtrosAtivos(this.filtros) > 0;
+
+        if (this.clientes.length === 0 && comFiltro) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">🔍</div>
+                    <h3>Nenhum cliente encontrado com esses filtros</h3>
+                    <button type="button" class="btn btn-sm btn-outline" data-action="limpar-filtros">
+                        Limpar filtros
+                    </button>
+                </div>
+            `;
+            container.querySelector('[data-action="limpar-filtros"]')
+                .addEventListener('click', () => this.limparFiltros());
+            return;
+        }
 
         if (this.clientes.length === 0) {
             container.innerHTML = `
@@ -111,7 +245,13 @@ export class ClientesPage {
             return;
         }
 
+        const plural = (n) => `${n} ${n === 1 ? 'cliente' : 'clientes'}`;
+        const contador = comFiltro
+            ? `${this.clientes.length} de ${plural(this.totalClientes)}`
+            : plural(this.clientes.length);
+
         container.innerHTML = `
+            <p class="text-muted contador-clientes" id="clientes-contador">${contador}</p>
             <div class="table-container">
                 <table class="table">
                     <thead>
@@ -190,7 +330,7 @@ export class ClientesPage {
     }
 
     handleSearch(query) {
-        this.searchQuery = query;
+        this.filtros.texto = query;
         this.loadClientes();
     }
 

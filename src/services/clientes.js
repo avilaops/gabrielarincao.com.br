@@ -1,5 +1,6 @@
 // Serviço de gestão de clientes
 import { StorageService } from './storage.js';
+import { BuscaService } from './busca.js';
 import { Utils } from '../utils/utils.js';
 
 export class ClienteService {
@@ -57,13 +58,7 @@ export class ClienteService {
     }
 
     static search(query) {
-        const lowerQuery = query.toLowerCase();
-        return this.getAll().filter(cliente => 
-            cliente.nome.toLowerCase().includes(lowerQuery) ||
-            // Backup editado à mão pode trazer o telefone como número
-            (cliente.telefone && String(cliente.telefone).includes(query)) ||
-            (cliente.instagram && cliente.instagram.toLowerCase().includes(lowerQuery))
-        );
+        return BuscaService.filtrarClientes(this.getAll(), { texto: query });
     }
 
     static getAniversariantes() {
