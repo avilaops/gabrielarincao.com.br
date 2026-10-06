@@ -80,20 +80,13 @@ npx serve
 
 ### Deploy no GitHub Pages
 
-1. Configure o repositório:
-```bash
-git add .
-git commit -m "Initial commit - Sistema completo"
-git push origin main
-```
+Publicado no **GitHub Pages** pelo workflow `.github/workflows/pages.yml`: todo push na `main` gera o site e publica; pull requests só rodam o build, para validar.
 
-2. Ative o GitHub Pages:
-   - Vá em **Settings** → **Pages**
-   - Source: **Deploy from a branch**
-   - Branch: **main** / **root**
-   - Clique em **Save**
+1. Em **Settings** → **Pages**, Source: **GitHub Actions**.
+2. Em **Custom domain**, informe `gabrielarincao.com.br` e marque **Enforce HTTPS**.
 
-3. Acesse: `https://avilaops.github.io/gabriela/`
+Só os arquivos do site vão para o ar (lista no passo "Separa os arquivos
+publicados" do workflow); arquivo novo na raiz precisa entrar nessa lista.
 
 ### Configuração de Domínio Customizado
 
