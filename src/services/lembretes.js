@@ -101,8 +101,8 @@ Gabriela Rincão`
         }
     };
 
-    // Verificar agendamentos que precisam de lembrete
-    static getAgendamentosParaLembrete() {
+    // Agendamentos ativos de amanhã, separados por já ter ou não lembrete enviado
+    static getAgendamentosDeAmanha(enviado) {
         const agora = new Date();
         const amanha = new Date(agora);
         amanha.setDate(amanha.getDate() + 1);
@@ -115,8 +115,7 @@ Gabriela Rincão`
         
         return agendamentos.filter(ag => {
             if (ag.status !== 'agendado' && ag.status !== 'confirmado') return false;
-            // Quem já recebeu não volta para a lista (mesma conta do card Avisos)
-            if (ag.lembreteEnviado === true) return false;
+            if ((ag.lembreteEnviado === true) !== enviado) return false;
             
             const dataAgendamento = new Date(ag.dataHora);
             return dataAgendamento >= amanha && dataAgendamento < depoisDeAmanha;
@@ -127,6 +126,17 @@ Gabriela Rincão`
                 cliente
             };
         });
+    }
+
+    // Verificar agendamentos que precisam de lembrete
+    static getAgendamentosParaLembrete() {
+        // Quem já recebeu não volta para a lista (mesma conta do card Avisos)
+        return this.getAgendamentosDeAmanha(false);
+    }
+
+    // Lembretes já marcados como enviados: o WhatsApp pode não ter aberto, então dá para reenviar
+    static getLembretesEnviados() {
+        return this.getAgendamentosDeAmanha(true);
     }
 
     // Formatar mensagem com dados do agendamento

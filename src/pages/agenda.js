@@ -494,8 +494,10 @@ export class AgendaPage {
         }
 
         const agendamentos = LembretesService.getAgendamentosParaLembrete();
+        // Marcado como enviado não garante que o WhatsApp abriu: fica na tela para reenviar
+        const enviados = LembretesService.getLembretesEnviados();
         
-        if (agendamentos.length === 0) {
+        if (agendamentos.length === 0 && enviados.length === 0) {
             Modal.alert('Não há agendamentos para amanhã que precisam de lembrete.');
             return;
         }
@@ -503,7 +505,7 @@ export class AgendaPage {
         const modalId = 'modal-lembretes-' + Date.now();
         const modal = new Modal({
             id: modalId,
-            title: `🔔 Enviar Lembretes (${agendamentos.length} agendamento${agendamentos.length > 1 ? 's' : ''})`,
+            title: `🔔 Enviar Lembretes (${agendamentos.length} pendente${agendamentos.length === 1 ? '' : 's'})`,
             size: 'lg',
             content: `
                 <div style="margin-bottom: 24px;">
@@ -524,7 +526,7 @@ export class AgendaPage {
         // Renderizar lista de lembretes
         const list = document.getElementById('lembretes-list');
         if (list) {
-            list.innerHTML = agendamentos.map(ag => `
+            list.innerHTML = [...agendamentos, ...enviados].map(ag => `
                 <div class="card mb-sm" style="padding: 16px;">
                     <div class="flex flex-between" style="align-items: start;">
                         <div style="flex: 1;">
@@ -549,7 +551,7 @@ export class AgendaPage {
                             `).join('')}
                         </select>
                         <button class="btn btn-sm btn-primary" data-lembrete-enviar="${Utils.sanitizeHTML(ag.id)}" data-cliente-id="${Utils.sanitizeHTML(ag.clienteId)}">
-                            📱 Enviar
+                            ${ag.lembreteEnviado ? '🔁 Reenviar' : '📱 Enviar'}
                         </button>
                     </div>
                 </div>

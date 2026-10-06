@@ -239,6 +239,50 @@ test('enviar o lembrete tira o agendamento da lista do modal', () => {
     assert.deepEqual(ids(LembretesService.getAgendamentosParaLembrete()), ['dois']);
 });
 
+test('lembrete enviado continua disponível para reenvio, fora da lista de pendentes', () => {
+    clientes([{ nome: 'Ana' }]);
+    const amanha = new Date();
+    amanha.setDate(amanha.getDate() + 1);
+    amanha.setHours(12, 0, 0, 0);
+    const ontem = new Date();
+    ontem.setDate(ontem.getDate() - 1);
+    agendamentos([
+        { id: 'um', dataHora: amanha.toISOString() },
+        { id: 'dois', dataHora: amanha.toISOString() },
+        { id: 'cancelado', dataHora: amanha.toISOString(), status: 'cancelado', lembreteEnviado: true },
+        { id: 'ontem', dataHora: ontem.toISOString(), lembreteEnviado: true }
+    ]);
+    assert.deepEqual(ids(LembretesService.getLembretesEnviados()), []);
+
+    const [primeiro] = LembretesService.getAgendamentosParaLembrete().filter(ag => ag.id === 'um');
+    LembretesService.enviarLembrete(primeiro, primeiro.cliente);
+    const [enviado] = LembretesService.getLembretesEnviados();
+    assert.equal(enviado.id, 'um');
+    assert.equal(enviado.cliente.nome, 'Ana');
+
+    // Reenviar gera o link de novo e não devolve o agendamento aos pendentes
+    const link = LembretesService.enviarLembrete(enviado, enviado.cliente, 'elegante');
+    assert.match(link, /^https:\/\/wa\.me\/5517999990000\?text=/);
+    assert.deepEqual(ids(LembretesService.getLembretesEnviados()), ['um']);
+    assert.deepEqual(ids(LembretesService.getAgendamentosParaLembrete()), ['dois']);
+});
+
+test('AgendaService.getPorData com texto AAAA-MM-DD usa o dia local, não o UTC', () => {
+    clientes([{ nome: 'Ana' }]);
+    agendamentos([
+        { id: 'manha', dataHora: '2026-10-05T10:00' },
+        { id: 'noite', dataHora: '2026-10-05T23:30' },
+        { id: 'amanha', dataHora: '2026-10-06T09:00' },
+        { id: 'ontem-noite', dataHora: '2026-10-04T23:30' }
+    ]);
+    assert.deepEqual(ids(AgendaService.getPorData('2026-10-05')).sort(), ['manha', 'noite']);
+    assert.deepEqual(ids(AgendaService.getPorData('2026-10-04')), ['ontem-noite']);
+    // Dia que não existe não casa com nenhum agendamento
+    assert.deepEqual(AgendaService.getPorData('2026-02-31'), []);
+    // ISO com horário continua valendo pelo instante: 02:30Z de 06/10 é 23:30 de 05/10 aqui
+    assert.deepEqual(ids(AgendaService.getPorData('2026-10-06T02:30:00.000Z')).sort(), ['manha', 'noite']);
+});
+
 test('AgendaService.getPorData compara pelo dia local, mesmo depois das 21h', () => {
     clientes([{ nome: 'Ana' }]);
     agendamentos([

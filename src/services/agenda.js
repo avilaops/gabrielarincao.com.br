@@ -1,6 +1,7 @@
 // Serviço de gestão de agendamentos
 import { StorageService } from './storage.js';
 import { ClienteService } from './clientes.js';
+import { Utils } from '../utils/utils.js';
 
 export class AgendaService {
     static STORAGE_KEY = StorageService.KEYS.AGENDAMENTOS;
@@ -66,7 +67,11 @@ export class AgendaService {
 
     static getPorData(data) {
         // Dia local: em UTC, um horário depois das 21h já cai no dia seguinte
-        const dia = new Date(data);
+        // Texto AAAA-MM-DD é lido como UTC por `new Date` e voltaria um dia no Brasil
+        const dia = typeof data === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(data)
+            ? Utils.parseDataLocal(data)
+            : new Date(data);
+        if (!dia) return [];
         return this.getAll().filter(agendamento => {
             const agendData = new Date(agendamento.dataHora);
             return agendData.getFullYear() === dia.getFullYear()
