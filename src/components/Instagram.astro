@@ -1,14 +1,28 @@
 ---
+import { Image } from 'astro:assets';
+import logoMarrom from '../assets/img/logo-gr-fundo-marrom.jpg';
 import { site } from '../data/site';
 import { linkInstagram } from '../lib/contato';
 import IconeInstagram from './IconeInstagram.astro';
 ---
-<section id="instagram" class="secao bg-white text-center" aria-labelledby="titulo-instagram">
+<section id="instagram" class="secao" aria-labelledby="titulo-instagram">
   <div class="container-site">
-    <h2 id="titulo-instagram" class="titulo-secao">Acompanhe no Instagram</h2>
-    <p class="mx-auto mt-6 max-w-md">Trabalhos recentes, antes e depois e novidades do estúdio.</p>
-    <a href={linkInstagram} target="_blank" rel="noopener" class="btn-escuro mt-8">
-      <IconeInstagram /> Seguir @{site.instagram}
-    </a>
+    <div class="revelar grid items-center overflow-hidden rounded-3xl bg-carvao text-marfim shadow-media md:grid-cols-2">
+      <Image
+        src={logoMarrom}
+        alt="Monograma GR da Gabriela Rincão em metal sobre fundo café"
+        widths={[480, 720, 1136]}
+        sizes="(min-width: 768px) 50vw, 100vw"
+        class="aspect-[5/4] size-full object-cover"
+      />
+      <div class="p-8 text-center sm:p-12 md:text-left">
+        <p class="text-xs font-medium uppercase tracking-[0.3em] text-ouro">@{site.instagram}</p>
+        <h2 id="titulo-instagram" class="mt-3 text-3xl font-semibold text-marfim sm:text-4xl">Acompanhe no Instagram</h2>
+        <p class="mt-4 text-marfim/80">Trabalhos recentes, antes e depois e novidades do estúdio.</p>
+        <a href={linkInstagram} target="_blank" rel="noopener" class="btn-ouro mt-8">
+          <IconeInstagram /> Seguir @{site.instagram}
+        </a>
+      </div>
+    </div>
   </div>
 </section>

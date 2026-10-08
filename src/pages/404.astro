@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import IconeWhatsApp from '../components/IconeWhatsApp.astro';
+import { linkWhatsApp } from '../lib/contato';
+import { site } from '../data/site';
+---
+<Base titulo={`Página não encontrada · ${site.nome}`} semIndice>
+  <Header />
+  <main id="conteudo" class="bg-carvao text-marfim">
+    <div class="container-site flex min-h-[70svh] flex-col items-center justify-center py-24 text-center">
+      <p class="font-display text-7xl text-ouro">404</p>
+      <h1 class="mt-6 text-3xl font-semibold text-marfim sm:text-4xl">Esta página não existe</h1>
+      <p class="mt-4 max-w-md text-marfim/80">O endereço pode ter mudado. Volte para o início ou fale direto com a Gabriela.</p>
+      <div class="mt-10 flex flex-col gap-3 sm:flex-row">
+        <a href="/" class="btn-claro">Voltar ao início</a>
+        <a href={linkWhatsApp()} target="_blank" rel="noopener" class="btn-ouro"><IconeWhatsApp /> Agendar pelo WhatsApp</a>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Base>

@@ -63,9 +63,13 @@ descrito em outro lugar deste repositório:
 - `src/layouts/Base.astro` tem o `<head>`: SEO, Open Graph, JSON-LD `BeautySalon`, GTM e o
   listener de `generate_lead` (conversão do GA4; não remova nem mude os campos).
 - `src/content/servicos/*.md` — serviços e preços (coleção com schema em `src/content.config.ts`).
-- `src/data/site.ts` — contato e IDs; `src/data/depoimentos.ts` — depoimentos.
+- `src/data/site.ts` — contato e IDs; `src/data/depoimentos.ts` — depoimentos;
+  `src/data/faq.ts` — dúvidas frequentes (também viram JSON-LD `FAQPage`). Resposta só com
+  dado que já está no site; mudou duração de serviço, mude a dúvida junto.
+- `src/pages/404.astro` — página de erro (`noindex`, fora do sitemap).
 - `src/styles/global.css` — tokens de cor e fonte de `docs/marca/IDENTIDADE_VISUAL.md`.
-- `public/` — copiado como está para `dist/` (favicons, `CNAME`, `robots.txt`, IndexNow).
+- `public/` — copiado como está para `dist/` (favicons, `CNAME`, `robots.txt`, IndexNow,
+  `og.jpg` 1200×630 usado no preview de links).
 - `legacy/` — site antigo, só consulta. Não importe nada de lá.
 
 ## Regras de código

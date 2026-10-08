@@ -28,10 +28,13 @@ test('SEO: título, canonical, Open Graph e dados estruturados', async ({ page }
   await page.goto('/');
   await expect(page).toHaveTitle('Gabriela Rincão - Brow Lamination e Nanofios');
   await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href', 'https://gabrielarincao.com.br/');
-  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', 'https://gabrielarincao.com.br/og-default.png');
-  const jsonLd = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent()) ?? '{}');
-  expect(jsonLd['@type']).toBe('BeautySalon');
-  expect(jsonLd.hasOfferCatalog.itemListElement).toHaveLength(SERVICOS.length);
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', 'https://gabrielarincao.com.br/og.jpg');
+  const blocos = await page.locator('script[type="application/ld+json"]').allTextContents();
+  const dados = blocos.map((b) => JSON.parse(b));
+  const salao = dados.find((d) => d['@type'] === 'BeautySalon');
+  expect(salao.hasOfferCatalog.itemListElement).toHaveLength(SERVICOS.length);
+  const faq = dados.find((d) => d['@type'] === 'FAQPage');
+  expect(faq.mainEntity.length).toBe(await page.locator('[data-pergunta]').count());
 });
 
 test('links de contato apontam para os canais certos', async ({ page }) => {
@@ -85,4 +88,21 @@ test('sem erro de JavaScript e sem rolagem horizontal', async ({ page, context }
   expect(erros).toEqual([]);
   const larguras = await page.evaluate(() => [document.documentElement.scrollWidth, window.innerWidth]);
   expect(larguras[0]).toBeLessThanOrEqual(larguras[1]);
+});
+
+test('dúvidas abrem e fecham sem JavaScript', async ({ page }) => {
+  await page.goto('/');
+  const primeira = page.locator('[data-pergunta]').first();
+  await expect(primeira.locator('p')).toBeHidden();
+  await primeira.locator('summary').click();
+  await expect(primeira.locator('p')).toBeVisible();
+});
+
+test('página 404 fica fora da busca e leva de volta ao início', async ({ page }) => {
+  await page.goto('/404.html');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Esta página não existe');
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
+  await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
+  await page.getByRole('link', { name: 'Voltar ao início' }).click();
+  await expect(page).toHaveURL(/\/$/);
 });

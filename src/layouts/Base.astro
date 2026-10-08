@@ -4,8 +4,15 @@ import { getCollection } from 'astro:content';
 import { site } from '../data/site';
 import { linkInstagram, valorDoPreco } from '../lib/contato';
 
+interface Props {
+  titulo?: string;
+  /** Página fora da busca (404). */
+  semIndice?: boolean;
+}
+const { titulo = site.titulo, semIndice = false } = Astro.props;
+
 const canonical = new URL(Astro.url.pathname, site.url).href;
-const imagemOg = new URL('/og-default.png', site.url).href;
+const imagemOg = new URL('/og.jpg', site.url).href;
 
 const servicos = (await getCollection('servicos')).sort((a, b) => a.data.ordem - b.data.ordem);
 
@@ -94,9 +101,10 @@ const jsonLd = {
       })();
     </script>
 
-    <title>{site.titulo}</title>
+    <title>{titulo}</title>
+    {semIndice && <meta name="robots" content="noindex" />}
     <meta name="description" content={site.descricao} />
-    <link rel="canonical" href={canonical} />
+    {!semIndice && <link rel="canonical" href={canonical} />}
     <meta name="theme-color" content="#2C2520" />
 
     <meta property="og:type" content="website" />

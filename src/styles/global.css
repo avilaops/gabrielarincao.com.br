@@ -74,3 +74,21 @@
 @utility btn-escuro {
   @apply btn bg-carvao text-marfim hover:bg-cafe;
 }
+
+/* Surge ao entrar na tela. Só CSS (scroll-driven animations): sem suporte ou com
+   movimento reduzido, o conteúdo aparece direto, sem animação. */
+@keyframes surgir {
+  from {
+    opacity: 0;
+    translate: 0 1.5rem;
+  }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .revelar {
+      animation: surgir linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+  }
+}

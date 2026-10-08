@@ -31,6 +31,14 @@ import IconeWhatsApp from './IconeWhatsApp.astro';
         </a>
         <a href="#servicos" class="btn-claro w-full sm:w-auto">Ver serviços</a>
       </div>
+      <ul class="mt-10 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-marfim/70 lg:justify-start">
+        {['6 anos de experiência', 'Design personalizado', 'Agendamento pelo WhatsApp'].map((t) => (
+          <li class="flex items-center gap-2">
+            <svg class="size-4 text-ouro" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m5 12 5 5L20 7" /></svg>
+            {t}
+          </li>
+        ))}
+      </ul>
     </div>
 
     <figure class="relative mx-auto w-full max-w-[17rem] sm:max-w-sm lg:max-w-md">
