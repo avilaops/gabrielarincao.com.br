@@ -1,0 +1,36 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { galeria } from '../data/galeria';
+import { resolverFotos } from '../lib/estudio';
+
+const arquivos = import.meta.glob<{ default: ImageMetadata }>('../assets/galeria/*.{jpg,jpeg,png,webp,avif}', { eager: true });
+const fotos = resolverFotos(galeria, arquivos).map((m, i) => ({ ...galeria[i], imagem: m.default }));
+---
+{fotos.length > 0 && (
+  <section id="trabalhos" class="secao bg-carvao" aria-labelledby="titulo-trabalhos">
+    <div class="container-site">
+      <h2 id="titulo-trabalhos" class="titulo-secao text-marfim">Trabalhos da Gabriela</h2>
+      <ul class="mt-14 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
+        {fotos.map((f) => (
+          <li class="revelar">
+            <figure class="group relative overflow-hidden rounded-2xl">
+              <Image
+                src={f.imagem}
+                alt={f.legenda}
+                widths={[320, 480, 720]}
+                sizes="(min-width: 1024px) 33vw, 50vw"
+                class="aspect-square w-full object-cover transition duration-500 group-hover:scale-105"
+              />
+              {f.servico && (
+                <figcaption class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-carvao/80 to-transparent p-3 text-sm font-medium text-marfim">
+                  {f.servico}
+                </figcaption>
+              )}
+            </figure>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+)}

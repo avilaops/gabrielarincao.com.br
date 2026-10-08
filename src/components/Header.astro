@@ -3,9 +3,13 @@ import { Image } from 'astro:assets';
 import logo from '../assets/img/logo-gr.png';
 import { linkWhatsApp } from '../lib/contato';
 import IconeWhatsApp from './IconeWhatsApp.astro';
+import { galeria } from '../data/galeria';
+import { estudio } from '../data/estudio';
 
 const links = [
+  ...(estudio.sobre.length ? [{ href: '/#sobre', texto: 'Sobre' }] : []),
   { href: '/#servicos', texto: 'Serviços' },
+  ...(galeria.length ? [{ href: '/#trabalhos', texto: 'Trabalhos' }] : []),
   { href: '/#como-funciona', texto: 'Como funciona' },
   { href: '/#depoimentos', texto: 'Depoimentos' },
   { href: '/#duvidas', texto: 'Dúvidas' },
@@ -19,7 +23,7 @@ const links = [
       <span class="font-display text-lg text-marfim">Gabriela Rincão</span>
     </a>
 
-    <nav aria-label="Principal" class="hidden items-center gap-7 lg:flex">
+    <nav aria-label="Principal" class="hidden items-center gap-7 xl:flex">
       {links.map((l) => <a href={l.href} class="text-sm text-marfim/85 transition hover:text-ouro">{l.texto}</a>)}
       <a href={linkWhatsApp()} target="_blank" rel="noopener" class="btn-ouro min-h-10 px-5 py-2 text-sm">
         <IconeWhatsApp class="size-4" /> Agendar
@@ -28,7 +32,7 @@ const links = [
 
     <button
       type="button"
-      class="flex size-11 items-center justify-center rounded-full lg:hidden"
+      class="flex size-11 items-center justify-center rounded-full xl:hidden"
       aria-controls="menu-mobile"
       aria-expanded="false"
       aria-label="Abrir menu"
@@ -40,7 +44,7 @@ const links = [
     </button>
   </div>
 
-  <nav id="menu-mobile" aria-label="Principal" class="border-t border-marfim/10 lg:hidden" hidden>
+  <nav id="menu-mobile" aria-label="Principal" class="border-t border-marfim/10 xl:hidden" hidden>
     <ul class="container-site flex flex-col py-2">
       {links.map((l) => <li><a href={l.href} class="block py-3 text-marfim">{l.texto}</a></li>)}
       <li class="py-3">

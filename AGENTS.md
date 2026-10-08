@@ -66,6 +66,10 @@ descrito em outro lugar deste repositório:
 - `src/data/site.ts` — contato e IDs; `src/data/depoimentos.ts` — depoimentos;
   `src/data/faq.ts` — dúvidas frequentes (também viram JSON-LD `FAQPage`). Resposta só com
   dado que já está no site; mudou duração de serviço, mude a dúvida junto.
+- `src/data/estudio.ts` (endereço, horários, Maps, avaliações, texto "Sobre") e
+  `src/data/galeria.ts` + `src/assets/galeria/` (fotos reais de trabalhos): cada parte só
+  aparece no site quando preenchida. Guia e mensagem para pedir o material em
+  `docs/CONTEUDO-DA-GABRIELA.md`.
 - `src/pages/404.astro` — página de erro (`noindex`, fora do sitemap).
 - `src/styles/global.css` — tokens de cor e fonte de `docs/marca/IDENTIDADE_VISUAL.md`.
 - `public/` — copiado como está para `dist/` (favicons, `CNAME`, `robots.txt`, IndexNow,
@@ -96,5 +100,6 @@ descrito em outro lugar deste repositório:
 
 - Depoimentos herdados do site antigo ainda não foram confirmados como reais
   (`src/data/depoimentos.ts`).
-- Endereço e horário do estúdio não estão no site nem no JSON-LD: falta a Gabriela informar.
+- Fotos de trabalhos, foto e texto "Sobre", endereço, horários e links do Google: a
+  estrutura está pronta e vazia; falta a Gabriela enviar (`docs/CONTEUDO-DA-GABRIELA.md`).
 - A senha do antigo CRM ficou no histórico do git. Se ela era usada em outro lugar, troque.

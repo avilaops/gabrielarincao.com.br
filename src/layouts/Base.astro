@@ -3,6 +3,8 @@ import '../styles/global.css';
 import { getCollection } from 'astro:content';
 import { site } from '../data/site';
 import { linkInstagram, valorDoPreco } from '../lib/contato';
+import { estudio } from '../data/estudio';
+import { dadosLocais } from '../lib/estudio';
 
 interface Props {
   titulo?: string;
@@ -16,8 +18,9 @@ const imagemOg = new URL('/og.jpg', site.url).href;
 
 const servicos = (await getCollection('servicos')).sort((a, b) => a.data.ordem - b.data.ordem);
 
-// Dados estruturados para a busca local do Google. Endereço e horário ficam de
-// fora até a Gabriela confirmar: dado errado aqui é pior que dado nenhum.
+// Dados estruturados para a busca local do Google. Endereço, horário e mapa só
+// entram quando preenchidos em src/data/estudio.ts: dado errado aqui é pior que
+// dado nenhum.
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'BeautySalon',
@@ -29,6 +32,7 @@ const jsonLd = {
   email: site.email,
   sameAs: [linkInstagram],
   priceRange: 'R$ 40 - R$ 450',
+  ...dadosLocais(estudio),
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
     name: 'Serviços',

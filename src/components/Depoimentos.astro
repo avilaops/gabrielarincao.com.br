@@ -1,5 +1,6 @@
 ---
 import { depoimentos } from '../data/depoimentos';
+import { estudio } from '../data/estudio';
 ---
 <section id="depoimentos" class="secao" aria-labelledby="titulo-depoimentos">
   <div class="container-site">
@@ -15,5 +16,10 @@ import { depoimentos } from '../data/depoimentos';
         </li>
       ))}
     </ul>
+    {estudio.avaliacoesUrl && (
+      <p class="mt-10 text-center">
+        <a href={estudio.avaliacoesUrl} target="_blank" rel="noopener" class="btn-escuro">Ver avaliações no Google</a>
+      </p>
+    )}
   </div>
 </section>

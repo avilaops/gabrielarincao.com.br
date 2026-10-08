@@ -1,0 +1,29 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { estudio } from '../data/estudio';
+import { site } from '../data/site';
+
+const foto = Object.values(
+  import.meta.glob<{ default: ImageMetadata }>('../assets/img/gabriela.{jpg,jpeg,png,webp,avif}', { eager: true }),
+)[0]?.default;
+---
+{estudio.sobre.length > 0 && (
+  <section id="sobre" class="secao" aria-labelledby="titulo-sobre">
+    <div class:list={['container-site grid items-center gap-12', foto && 'lg:grid-cols-[0.8fr_1.2fr] lg:gap-20']}>
+      {foto && (
+        <div class="revelar relative mx-auto w-full max-w-sm">
+          <div class="absolute -inset-3 rounded-t-full border border-ouro/60" aria-hidden="true"></div>
+          <Image src={foto} alt={`${site.nome}, designer de sobrancelhas`} widths={[360, 540, 720]} sizes="384px" class="relative aspect-[4/5] w-full rounded-t-full object-cover shadow-media" />
+        </div>
+      )}
+      <div class="revelar">
+        <p class="text-xs font-medium uppercase tracking-[0.3em] text-cafe-medio">Quem cuida do seu olhar</p>
+        <h2 id="titulo-sobre" class="mt-3 text-3xl font-semibold sm:text-4xl">Sobre a Gabriela</h2>
+        <div class="mt-6 space-y-4 text-lg">
+          {estudio.sobre.map((p) => <p>{p}</p>)}
+        </div>
+      </div>
+    </div>
+  </section>
+)}
