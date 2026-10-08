@@ -1,0 +1,27 @@
+# Atualizações automáticas em PR semanal. O workflow do Pages roda testes,
+# build e Playwright em cada PR, então só se mescla o que passar.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: America/Sao_Paulo
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+    groups:
+      astro-e-tailwind:
+        patterns: ["astro", "@astrojs/*", "tailwindcss", "@tailwindcss/*"]
+      testes:
+        patterns: ["vitest", "@playwright/test", "typescript"]
+      fontes:
+        patterns: ["@fontsource/*", "@fontsource-variable/*"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "ci"

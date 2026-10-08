@@ -1,20 +1,13 @@
 ---
 import { Image } from 'astro:assets';
-import fundo from '../assets/img/estudio-desfocado.avif';
 import sobrancelha from '../assets/img/sobrancelha-escovinha.jpg';
 import { linkWhatsApp } from '../lib/contato';
 import IconeWhatsApp from './IconeWhatsApp.astro';
 ---
 <section id="inicio" class="relative isolate overflow-hidden bg-carvao text-marfim">
-  <Image
-    src={fundo}
-    alt=""
-    widths={[640, 832]}
-    sizes="100vw"
-    loading="eager"
-    class="absolute inset-0 -z-10 size-full object-cover opacity-25"
-  />
-  <div class="absolute inset-0 -z-10 bg-gradient-to-br from-carvao/50 via-carvao/80 to-carvao"></div>
+  <!-- Profundidade só com gradiente: a foto desfocada que ficava aqui, a 25% de
+       opacidade, quase não aparecia e era o LCP da página. -->
+  <div class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_20%_30%,#3d3129_0%,#2c2520_55%,#241e1a_100%)]"></div>
 
   <div class="container-site grid items-center gap-12 py-16 sm:py-20 lg:min-h-[86svh] lg:grid-cols-[1.1fr_0.9fr] lg:gap-16 lg:py-24">
     <div class="text-center lg:text-left">

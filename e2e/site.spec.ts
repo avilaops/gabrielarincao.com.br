@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-// Serviços e preços do site antigo (legacy/src/pages/landing.js). Preço é dado
+// Serviços e preços conferidos com o site antigo na migração para Astro. Preço é dado
 // de negócio: se mudar, mude aqui e em src/content/servicos de propósito.
 const SERVICOS = [
   ['Brow Lamination', 'R$ 120'],

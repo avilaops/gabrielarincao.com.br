@@ -74,7 +74,8 @@ descrito em outro lugar deste repositório:
 - `src/styles/global.css` — tokens de cor e fonte de `docs/marca/IDENTIDADE_VISUAL.md`.
 - `public/` — copiado como está para `dist/` (favicons, `CNAME`, `robots.txt`, IndexNow,
   `og.jpg` 1200×630 usado no preview de links).
-- `legacy/` — site antigo, só consulta. Não importe nada de lá.
+- O site antigo (HTML/JS puro, com o CRM) saiu do repositório; está no histórico do git
+  até o commit `8accb8b`.
 
 ## Regras de código
 
@@ -94,6 +95,8 @@ descrito em outro lugar deste repositório:
 
 - Push na `main` dispara `.github/workflows/pages.yml`, que testa, gera `dist/` e publica no
   GitHub Pages.
+- `.github/dependabot.yml` abre PR semanal de dependências (npm) e mensal de actions; o
+  workflow testa cada PR. Mescle só o que passar.
 - Workflow, DNS e domínio são da raia `ops`; não altere aqui sem combinar.
 
 ## Pendências conhecidas

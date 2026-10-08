@@ -64,5 +64,4 @@ public/                    arquivos copiados como estão (favicons, robots, CNAM
 tests/                     Vitest
 e2e/                       Playwright
 docs/marca/                identidade visual e logos originais
-legacy/                    site antigo, só para consulta
 ```
