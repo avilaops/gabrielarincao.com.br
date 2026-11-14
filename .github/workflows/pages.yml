@@ -22,15 +22,11 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
-      - name: Testes no navegador contra o build
-        run: |
-          npx playwright install --with-deps chromium
-          npm run test:e2e
       - name: Obter publicador de texto
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           repository: avilaops/motor-web
-          ref: 5d8cf306ceded156ab2a46ce1cfd29608e67496f
+          ref: d5067bbbe3522f459367af3b58b4298324801f82
           path: .publicacao-texto
           persist-credentials: false
       - name: Instalar publicador de texto
@@ -38,9 +34,16 @@ jobs:
         run: npm ci --ignore-scripts --omit=dev
       - name: Gerar Markdown e MDX do HTML publicado
         run: node .publicacao-texto/bin/publicar-texto.mjs --diretorio dist --origem https://gabrielarincao.com.br
+      - name: Gerar descoberta pública e ferramentas de leitura
+        run: node .publicacao-texto/bin/publicar-descoberta.mjs --diretorio dist --origem https://gabrielarincao.com.br
+      - name: Testes no navegador contra o artefato publicado
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:e2e
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: dist
+          include-hidden-files: true
   deploy:
     needs: build
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
